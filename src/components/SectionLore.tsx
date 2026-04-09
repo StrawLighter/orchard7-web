@@ -3,13 +3,15 @@
 import AnimatedSprite from "./AnimatedSprite";
 
 export default function SectionLore() {
-  const miloFrames = [0, 1, 2, 3].map((i) => `/assets/Milo Pixel Art/animations/Walking-15d358c2/south/frame_00${i}.png`);
+  const rotations = ["south", "south-west", "west", "north-west", "north", "north-east", "east", "south-east"];
+  const miloSpin = rotations.map((r) => `/assets/Milo Pixel Art/rotations/${r}.png`);
+  const oruSpin = rotations.map((r) => `/assets/Oru Pixel Art/rotations/${r}.png`);
   const concepts: Array<{
     name: string; file?: string; color: string; desc: string;
     animated?: string[]; isPixel?: boolean; placeholder?: string;
   }> = [
-    { name: "Milo", color: "#B5851B", desc: "The Wanderer", animated: miloFrames },
-    { name: "Oru", file: "concept-oru.png", color: "#40916C", desc: "The Garden Spirit", isPixel: true },
+    { name: "Milo", color: "#B5851B", desc: "The Wanderer", animated: miloSpin },
+    { name: "Oru", color: "#40916C", desc: "The Garden Spirit", animated: oruSpin },
     { name: "Thornhallow", file: "concept-thornhallow.png", color: "#2D6A4F", desc: "The Valley Town" },
     { name: "The Constructs", color: "#1B4332", desc: "Coming Soon", placeholder: "concept-constructs.png" },
   ];

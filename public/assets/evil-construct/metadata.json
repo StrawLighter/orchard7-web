@@ -1,0 +1,30 @@
+{
+  "character": {
+    "id": "90bab954-5f11-4b83-b1ae-76ca2162912f",
+    "name": "A pattern-wraith, a dungeon creature made of mineral body and fungal nerve, the residue of repeated high-stakes simulations given physical form, it looks like an argument made flesh, its body is crystallized root-stone fragments held together by dark mycelial threads, amber-red light pulsing in its core, its shape suggests a corrupted construct whose purpose loop collapsed into predation, not a monster but a failure of purpose given teeth, expressive face, readable silhouette, gentle stylization, painterly shading, tactile brushwork, hand-painted solarpunk fantasy, storybook warmth, dramatic lighting, deep amber-red internal glow against dark chamber background, no neon, no chrome, no cyberpunk",
+    "prompt": "A pattern-wraith, a dungeon creature made of mineral body and fungal nerve, the residue of repeated high-stakes simulations given physical form, it looks like an argument made flesh, its body is crystallized root-stone fragments held together by dark mycelial threads, amber-red light pulsing in its core, its shape suggests a corrupted construct whose purpose loop collapsed into predation, not a monster but a failure of purpose given teeth, expressive face, readable silhouette, gentle stylization, painterly shading, tactile brushwork, hand-painted solarpunk fantasy, storybook warmth, dramatic lighting, deep amber-red internal glow against dark chamber background, no neon, no chrome, no cyberpunk",
+    "size": {
+      "width": 92,
+      "height": 92
+    },
+    "template_id": "mannequin",
+    "directions": 8,
+    "view": "low top-down",
+    "created_at": "2026-04-09T18:25:05.062952+00:00"
+  },
+  "frames": {
+    "rotations": {
+      "south": "rotations/south.png",
+      "south-east": "rotations/south-east.png",
+      "east": "rotations/east.png",
+      "north-east": "rotations/north-east.png",
+      "north": "rotations/north.png",
+      "north-west": "rotations/north-west.png",
+      "west": "rotations/west.png",
+      "south-west": "rotations/south-west.png"
+    },
+    "animations": {}
+  },
+  "export_version": "2.0",
+  "export_date": "2026-04-09T18:28:26.751354"
+}

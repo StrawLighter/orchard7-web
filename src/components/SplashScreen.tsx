@@ -41,12 +41,7 @@ export default function SplashScreen({ onEnter }: { onEnter: () => void }) {
       <div className={`relative z-10 flex flex-col items-center gap-8 transition-all duration-1000 ${fading ? "scale-110 opacity-0" : "scale-100 opacity-100"}`}>
         {/* Logo */}
         <div className="w-24 h-24 sm:w-32 sm:h-32">
-          <img src="/assets/o7-logo.png" alt="O7" className="w-full h-full object-contain drop-shadow-[0_0_30px_rgba(181,133,27,0.4)]"
-            onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }} />
-          <div className="w-full h-full rounded-full border-2 border-o7-gold/30 flex items-center justify-center bg-o7-dark/30 backdrop-blur-sm"
-            style={{ marginTop: "-100%" }}>
-            <span className="font-pixel text-o7-gold text-xl drop-shadow-[0_0_15px_rgba(181,133,27,0.5)]">O7</span>
-          </div>
+          <img src="/assets/o7-crest.png" alt="O7" className="w-full h-full object-contain drop-shadow-[0_0_30px_rgba(181,133,27,0.4)]" />
         </div>
 
         <h1 className="font-pixel text-o7-cream/90 text-xs sm:text-sm text-center drop-shadow-[0_2px_10px_rgba(0,0,0,0.8)]">

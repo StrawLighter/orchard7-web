@@ -21,7 +21,7 @@ export default function Header() {
       <div className="mx-auto max-w-7xl px-4 py-3 flex items-center justify-between">
         {/* Logo */}
         <a href="#arrival" className="flex items-center gap-2">
-          <AssetImg src="/assets/o7-logo.png" w={32} h={32} fallbackColor="#2D6A4F" label="" />
+          <AssetImg src="/assets/o7-crest.png" w={32} h={32} fallbackColor="#2D6A4F" label="" />
           <span className="font-pixel text-o7-gold text-xs hidden sm:inline">O7</span>
         </a>
 

@@ -23,7 +23,7 @@ export default function SectionCommunity() {
         {/* Credits */}
         <div className="text-center space-y-3">
           <div className="w-12 h-12 mx-auto">
-            <img src="/assets/o7-logo.png" alt="O7" className="w-full h-full object-contain"
+            <img src="/assets/o7-crest.png" alt="O7" className="w-full h-full object-contain"
               onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }} />
             <div className="w-full h-full rounded-full border border-o7-gold/20 flex items-center justify-center"
               style={{ marginTop: "-100%" }}>

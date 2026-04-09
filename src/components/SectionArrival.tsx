@@ -63,17 +63,10 @@ export default function SectionArrival() {
       <div className={`absolute inset-0 flex flex-col items-center justify-center z-10 transition-all duration-1000 ${loaded ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"}`}>
         <div className="w-28 h-28 sm:w-36 sm:h-36 mb-6">
           <img
-            src="/assets/o7-logo.png"
+            src="/assets/o7-crest.png"
             alt="O7"
             className="w-full h-full object-contain drop-shadow-[0_0_20px_rgba(181,133,27,0.3)]"
-            onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }}
           />
-          <div
-            className="w-full h-full rounded-full border-2 border-o7-gold/40 flex items-center justify-center backdrop-blur-sm bg-o7-dark/30"
-            style={{ marginTop: "-100%" }}
-          >
-            <span className="font-pixel text-o7-gold text-2xl drop-shadow-[0_0_10px_rgba(181,133,27,0.5)]">O7</span>
-          </div>
         </div>
 
         <h1 className="font-pixel text-o7-cream text-sm sm:text-lg md:text-xl text-center leading-relaxed mb-3 drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)]">

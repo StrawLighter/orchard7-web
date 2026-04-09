@@ -61,11 +61,11 @@ export default function SectionArrival() {
 
       {/* Content overlay */}
       <div className={`absolute inset-0 flex flex-col items-center justify-center z-10 transition-all duration-1000 ${loaded ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"}`}>
-        <div className="w-28 h-28 sm:w-36 sm:h-36 mb-6">
+        <div className="w-28 h-28 sm:w-36 sm:h-36 mb-6 rounded-full overflow-hidden">
           <img
             src="/assets/o7-crest.png"
             alt="O7"
-            className="w-full h-full object-contain drop-shadow-[0_0_20px_rgba(181,133,27,0.3)]"
+            className="w-full h-full object-cover drop-shadow-[0_0_20px_rgba(181,133,27,0.3)]"
           />
         </div>
 

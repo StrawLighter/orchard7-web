@@ -1,0 +1,30 @@
+{
+  "character": {
+    "id": "6f952e1f-82d0-4a57-9dcf-e092d77cffb2",
+    "name": "A dormant construct golem standing motionless in an overgrown plaza, its root-stone body overtaken by wild moss and climbing vines, crystal eyes dark and unlit, one massive hand still holding a stone block it never placed, wildflowers growing from cracks in its shoulders, silver-white fog curling around its feet, beautiful and melancholy, a monument to interrupted purpose, not dead but deeply still, expressive face, readable silhouette, gentle stylization, painterly shading, tactile brushwork, hand-painted solarpunk fantasy, storybook warmth, muted dramatic lighting, muted silver and green tones, no neon, no chrome, no cyberpunk",
+    "prompt": "A dormant construct golem standing motionless in an overgrown plaza, its root-stone body overtaken by wild moss and climbing vines, crystal eyes dark and unlit, one massive hand still holding a stone block it never placed, wildflowers growing from cracks in its shoulders, silver-white fog curling around its feet, beautiful and melancholy, a monument to interrupted purpose, not dead but deeply still, expressive face, readable silhouette, gentle stylization, painterly shading, tactile brushwork, hand-painted solarpunk fantasy, storybook warmth, muted dramatic lighting, muted silver and green tones, no neon, no chrome, no cyberpunk",
+    "size": {
+      "width": 100,
+      "height": 100
+    },
+    "template_id": "mannequin",
+    "directions": 8,
+    "view": "low top-down",
+    "created_at": "2026-04-09T18:38:40.391062+00:00"
+  },
+  "frames": {
+    "rotations": {
+      "south": "rotations/south.png",
+      "south-east": "rotations/south-east.png",
+      "east": "rotations/east.png",
+      "north-east": "rotations/north-east.png",
+      "north": "rotations/north.png",
+      "north-west": "rotations/north-west.png",
+      "west": "rotations/west.png",
+      "south-west": "rotations/south-west.png"
+    },
+    "animations": {}
+  },
+  "export_version": "2.0",
+  "export_date": "2026-04-09T18:47:22.815837"
+}

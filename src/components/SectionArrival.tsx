@@ -10,14 +10,28 @@ export default function SectionArrival() {
 
   useEffect(() => {
     setLoaded(true);
-    audioRef.current = new Audio("/assets/o7-theme.mp3");
-    audioRef.current.loop = true;
-    audioRef.current.volume = 0.4;
+    const audio = new Audio("/assets/o7-theme.mp3");
+    audio.loop = true;
+    audio.volume = 0.4;
+    audioRef.current = audio;
+
+    // Try autoplay immediately (works if browser allows)
+    audio.play().then(() => setPlaying(true)).catch(() => {
+      // Browser blocked autoplay — start on first user interaction
+      const startOnInteract = () => {
+        audio.play().then(() => setPlaying(true)).catch(() => {});
+        document.removeEventListener("click", startOnInteract);
+        document.removeEventListener("scroll", startOnInteract);
+      };
+      document.addEventListener("click", startOnInteract, { once: true });
+      document.addEventListener("scroll", startOnInteract, { once: true });
+    });
+
     const onScroll = () => setScrollY(window.scrollY);
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => {
       window.removeEventListener("scroll", onScroll);
-      audioRef.current?.pause();
+      audio.pause();
     };
   }, []);
 

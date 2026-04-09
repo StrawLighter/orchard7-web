@@ -27,15 +27,19 @@ export default function SectionArrival() {
       tryPlay();
       if (started) {
         document.removeEventListener("click", onInteract);
-        document.removeEventListener("scroll", onInteract);
+        document.removeEventListener("wheel", onInteract);
         document.removeEventListener("touchstart", onInteract);
+        document.removeEventListener("touchmove", onInteract);
         document.removeEventListener("keydown", onInteract);
+        document.removeEventListener("pointerdown", onInteract);
       }
     };
     document.addEventListener("click", onInteract);
-    document.addEventListener("scroll", onInteract);
+    document.addEventListener("wheel", onInteract);       // wheel = user gesture (scroll is not)
     document.addEventListener("touchstart", onInteract);
+    document.addEventListener("touchmove", onInteract);   // swipe scroll on mobile
     document.addEventListener("keydown", onInteract);
+    document.addEventListener("pointerdown", onInteract); // covers mouse + touch + pen
 
     const onScroll = () => setScrollY(window.scrollY);
     window.addEventListener("scroll", onScroll, { passive: true });

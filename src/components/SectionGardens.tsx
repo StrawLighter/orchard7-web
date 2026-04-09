@@ -3,8 +3,8 @@
 import { useState, useEffect, useCallback } from "react";
 import { useWallet, useConnection } from "@solana/wallet-adapter-react";
 import { useWalletModal } from "@solana/wallet-adapter-react-ui";
-import { getAssociatedTokenAddressSync, getAccount } from "@solana/spl-token";
-import { LAMPORTS_PER_SOL, PublicKey } from "@solana/web3.js";
+import { getAssociatedTokenAddressSync, getAccount, createAssociatedTokenAccountInstruction, TOKEN_PROGRAM_ID, ASSOCIATED_TOKEN_PROGRAM_ID } from "@solana/spl-token";
+import { LAMPORTS_PER_SOL, PublicKey, Transaction } from "@solana/web3.js";
 import BN from "bn.js";
 import { usePrograms } from "@/lib/useAnchor";
 import {
@@ -60,10 +60,43 @@ export default function SectionGardens() {
 
   useEffect(() => { fetchAll(); }, [fetchAll]);
 
+  // Ensure user's GrienApple ATA exists (create if needed before claiming/harvesting)
+  const ensureGrienAta = async (): Promise<PublicKey> => {
+    const mint = gardenData!.grienMint!;
+    const ata = getAssociatedTokenAddressSync(mint, publicKey!);
+    try {
+      await getAccount(connection, ata);
+    } catch {
+      // ATA doesn't exist — create it
+      const ix = createAssociatedTokenAccountInstruction(publicKey!, ata, publicKey!, mint);
+      const tx = new Transaction().add(ix);
+      await programs!.provider.sendAndConfirm(tx);
+    }
+    return ata;
+  };
+
   const runTx = async (label: string, fn: () => Promise<string>) => {
     setLoading(true); setTxStatus(null);
-    try { const sig = await fn(); setTxStatus({ type: "success", msg: `${label} confirmed!`, sig }); await fetchAll(); }
-    catch (e: any) { setTxStatus({ type: "error", msg: e?.message?.slice(0, 150) || "Transaction failed" }); }
+    try {
+      const sig = await fn();
+      setTxStatus({ type: "success", msg: `${label} confirmed!`, sig });
+      setStakeAmount(""); setHarvestAmount(""); setRedeemAmount(""); setUnstakeAmount("");
+      await fetchAll();
+    }
+    catch (e: any) {
+      // Parse Anchor errors for cleaner messages
+      const raw = e?.message || e?.toString() || "Transaction failed";
+      let msg = raw.slice(0, 200);
+      if (raw.includes("InsufficientRipenedBlu")) msg = "Not enough ripened BluApple. Still in seed period (2 weeks).";
+      else if (raw.includes("LockActive")) msg = "Cannot unstake — lock period has not expired yet.";
+      else if (raw.includes("CannotChangeLockTier")) msg = "Cannot change lock tier while existing lock is active. Use the same tier.";
+      else if (raw.includes("EpochNotFinalized")) msg = "Epoch not yet finalized. Wait for the next epoch crank.";
+      else if (raw.includes("NothingStaked")) msg = "No SOL staked to unstake.";
+      else if (raw.includes("ZeroAmount")) msg = "Amount must be greater than zero.";
+      else if (raw.includes("ActionNotLive")) msg = "This action type is not live yet.";
+      else if (raw.includes("User rejected")) msg = "Transaction cancelled.";
+      setTxStatus({ type: "error", msg });
+    }
     finally { setLoading(false); }
   };
 
@@ -180,12 +213,18 @@ export default function SectionGardens() {
 
               <div className="flex gap-3">
                 <button disabled={loading || !canClaim}
-                  onClick={() => runTx("Claim", () => programs!.orchard.methods.claimRewards().accounts({ staker: publicKey, stakerGrienAta: getAssociatedTokenAddressSync(gardenData!.grienMint!, publicKey) } as any).rpc())}
+                  onClick={() => runTx("Claim", async () => {
+                    const ata = await ensureGrienAta();
+                    return programs!.orchard.methods.claimRewards().accounts({ staker: publicKey, stakerGrienAta: ata } as any).rpc();
+                  })}
                   className="rpg-btn flex-1 px-3 py-3 font-pixel text-[9px] text-o7-teal">
-                  {canClaim ? "Claim Rewards" : "No Epoch"}
+                  {canClaim ? "Claim Rewards" : "No Epoch to Claim"}
                 </button>
-                <button disabled={loading || ripenedBlu <= 0}
-                  onClick={() => { if (!harvestAmount) return; runTx("Harvest", () => programs!.orchard.methods.harvestBlu(5, new BN(Math.floor(parseFloat(harvestAmount) * 1e9))).accounts({ user: publicKey, grienMint: gardenData!.grienMint!, userGrienAta: getAssociatedTokenAddressSync(gardenData!.grienMint!, publicKey) } as any).rpc()); }}
+                <button disabled={loading || ripenedBlu <= 0 || !harvestAmount}
+                  onClick={() => runTx("Harvest", async () => {
+                    const ata = await ensureGrienAta();
+                    return programs!.orchard.methods.harvestBlu(5, new BN(Math.floor(parseFloat(harvestAmount) * 1e9))).accounts({ user: publicKey, grienMint: gardenData!.grienMint!, userGrienAta: ata } as any).rpc();
+                  })}
                   className="rpg-btn flex-1 px-3 py-3 font-pixel text-[9px] text-purple-400">
                   {ripenedBlu > 0 ? "Harvest Blu" : "Nothing Ripe"}
                 </button>
@@ -229,7 +268,10 @@ export default function SectionGardens() {
                 <input type="number" placeholder="Blu to redeem" value={redeemAmount} onChange={(e) => setRedeemAmount(e.target.value)}
                   className="rpg-input flex-1" />
                 <button disabled={loading || ripenedBlu <= 0 || !redeemAmount}
-                  onClick={() => runTx("Redeem", () => programs!.orchard.methods.redeemBlu(new BN(Math.floor(parseFloat(redeemAmount) * 1e9))).accounts({ user: publicKey, bankGrienTreasury: getBankGrienTreasuryPda(), userGrienAta: getAssociatedTokenAddressSync(gardenData!.grienMint!, publicKey) } as any).rpc())}
+                  onClick={() => runTx("Redeem", async () => {
+                    const ata = await ensureGrienAta();
+                    return programs!.orchard.methods.redeemBlu(new BN(Math.floor(parseFloat(redeemAmount) * 1e9))).accounts({ user: publicKey, bankGrienTreasury: getBankGrienTreasuryPda(), userGrienAta: ata } as any).rpc();
+                  })}
                   className="rpg-btn px-4 py-2 font-pixel text-[9px] text-red-400">
                   Redeem
                 </button>

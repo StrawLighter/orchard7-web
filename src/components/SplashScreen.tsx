@@ -40,8 +40,8 @@ export default function SplashScreen({ onEnter }: { onEnter: () => void }) {
       {/* Content */}
       <div className={`relative z-10 flex flex-col items-center gap-8 transition-all duration-1000 ${fading ? "scale-110 opacity-0" : "scale-100 opacity-100"}`}>
         {/* Logo */}
-        <div className="w-24 h-24 sm:w-32 sm:h-32 rounded-full overflow-hidden">
-          <img src="/assets/o7-crest.png" alt="O7" className="w-full h-full object-cover drop-shadow-[0_0_30px_rgba(181,133,27,0.4)]" />
+        <div style={{ width: 128, height: 128, borderRadius: "50%", overflow: "hidden" }}>
+          <img src="/assets/o7-crest.png" alt="O7" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
         </div>
 
         <h1 className="font-pixel text-o7-cream/90 text-xs sm:text-sm text-center drop-shadow-[0_2px_10px_rgba(0,0,0,0.8)]">

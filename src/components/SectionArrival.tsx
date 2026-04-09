@@ -1,17 +1,35 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 
 export default function SectionArrival() {
   const [scrollY, setScrollY] = useState(0);
   const [loaded, setLoaded] = useState(false);
+  const [playing, setPlaying] = useState(false);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
 
   useEffect(() => {
     setLoaded(true);
+    audioRef.current = new Audio("/assets/o7-theme.mp3");
+    audioRef.current.loop = true;
+    audioRef.current.volume = 0.4;
     const onScroll = () => setScrollY(window.scrollY);
     window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      audioRef.current?.pause();
+    };
   }, []);
+
+  const toggleMusic = () => {
+    if (!audioRef.current) return;
+    if (playing) {
+      audioRef.current.pause();
+    } else {
+      audioRef.current.play();
+    }
+    setPlaying(!playing);
+  };
 
   // Subtle zoom parallax: starts at scale 1.0, grows to 1.08 as you scroll
   const scale = 1 + scrollY * 0.00008;
@@ -83,12 +101,13 @@ export default function SectionArrival() {
         </a>
       </div>
 
-      {/* Music toggle (UI only) */}
+      {/* Music toggle */}
       <button
-        className="absolute bottom-6 right-6 z-20 w-10 h-10 rounded-full border border-o7-teal/30 bg-o7-dark/60 backdrop-blur-sm flex items-center justify-center text-o7-teal/50 hover:text-o7-teal transition text-sm"
-        title="Music (coming soon)"
+        onClick={toggleMusic}
+        className={`absolute bottom-6 right-6 z-20 w-10 h-10 rounded-full border bg-o7-dark/60 backdrop-blur-sm flex items-center justify-center transition text-sm ${playing ? "border-o7-gold/60 text-o7-gold" : "border-o7-teal/30 text-o7-teal/50 hover:text-o7-teal"}`}
+        title={playing ? "Pause music" : "Play music"}
       >
-        &#9835;
+        {playing ? "&#9836;" : "&#9835;"}
       </button>
     </section>
   );

@@ -15,17 +15,27 @@ export default function SectionArrival() {
     audio.volume = 0.4;
     audioRef.current = audio;
 
-    // Try autoplay immediately (works if browser allows)
-    audio.play().then(() => setPlaying(true)).catch(() => {
-      // Browser blocked autoplay — start on first user interaction
-      const startOnInteract = () => {
-        audio.play().then(() => setPlaying(true)).catch(() => {});
-        document.removeEventListener("click", startOnInteract);
-        document.removeEventListener("scroll", startOnInteract);
-      };
-      document.addEventListener("click", startOnInteract, { once: true });
-      document.addEventListener("scroll", startOnInteract, { once: true });
-    });
+    // Autoplay: try immediately, fallback to first interaction
+    let started = false;
+    const tryPlay = () => {
+      if (started) return;
+      audio.play().then(() => { started = true; setPlaying(true); }).catch(() => {});
+    };
+    tryPlay();
+    // Also try on any user interaction (click, scroll, touch, keydown)
+    const onInteract = () => {
+      tryPlay();
+      if (started) {
+        document.removeEventListener("click", onInteract);
+        document.removeEventListener("scroll", onInteract);
+        document.removeEventListener("touchstart", onInteract);
+        document.removeEventListener("keydown", onInteract);
+      }
+    };
+    document.addEventListener("click", onInteract);
+    document.addEventListener("scroll", onInteract);
+    document.addEventListener("touchstart", onInteract);
+    document.addEventListener("keydown", onInteract);
 
     const onScroll = () => setScrollY(window.scrollY);
     window.addEventListener("scroll", onScroll, { passive: true });
@@ -118,10 +128,10 @@ export default function SectionArrival() {
       {/* Music toggle */}
       <button
         onClick={toggleMusic}
-        className={`absolute bottom-6 right-6 z-20 w-10 h-10 rounded-full border bg-o7-dark/60 backdrop-blur-sm flex items-center justify-center transition text-sm ${playing ? "border-o7-gold/60 text-o7-gold" : "border-o7-teal/30 text-o7-teal/50 hover:text-o7-teal"}`}
+        className={`absolute bottom-6 right-6 z-20 w-12 h-12 rounded-full border-2 bg-o7-dark/70 backdrop-blur-sm flex items-center justify-center transition text-lg ${playing ? "border-o7-gold text-o7-gold shadow-[0_0_12px_rgba(181,133,27,0.4)]" : "border-o7-teal/40 text-o7-teal hover:text-o7-gold hover:border-o7-gold/60"}`}
         title={playing ? "Pause music" : "Play music"}
       >
-        {playing ? "&#9836;" : "&#9835;"}
+        {playing ? "\u266C" : "\u266B"}
       </button>
     </section>
   );

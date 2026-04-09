@@ -1,0 +1,4638 @@
+{
+  "address": "DvVEq5v26rdDsaehVPL7cjNx54wpbE9f7m11UuitZeGQ",
+  "metadata": {
+    "name": "orchard",
+    "version": "0.1.0",
+    "spec": "0.1.0",
+    "description": "Orchard 7 — The Gardens: GrienApple/BluApple dual-token gamified savings protocol"
+  },
+  "instructions": [
+    {
+      "name": "check_fountain_pulse",
+      "docs": [
+        "Check if fountain has enough yield to fire a pulse."
+      ],
+      "discriminator": [
+        10,
+        150,
+        140,
+        23,
+        103,
+        186,
+        225,
+        153
+      ],
+      "accounts": [
+        {
+          "name": "cranker",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "garden",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  103,
+                  97,
+                  114,
+                  100,
+                  101,
+                  110
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "fountain_config",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  102,
+                  111,
+                  117,
+                  110,
+                  116,
+                  97,
+                  105,
+                  110,
+                  45,
+                  99,
+                  111,
+                  110,
+                  102,
+                  105,
+                  103
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "fountain_vault",
+          "docs": [
+            "The fountain SOL vault — we read its lamport balance"
+          ],
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  102,
+                  111,
+                  117,
+                  110,
+                  116,
+                  97,
+                  105,
+                  110,
+                  45,
+                  115,
+                  111,
+                  108
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "fountain_pulse",
+          "docs": [
+            "The new pulse account (created if threshold crossed)"
+          ],
+          "writable": true
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "claim_fountain_reward",
+      "docs": [
+        "Claim a reward from the active fountain pulse."
+      ],
+      "discriminator": [
+        236,
+        101,
+        250,
+        10,
+        60,
+        196,
+        0,
+        13
+      ],
+      "accounts": [
+        {
+          "name": "user",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "garden",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  103,
+                  97,
+                  114,
+                  100,
+                  101,
+                  110
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "fountain_config",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  102,
+                  111,
+                  117,
+                  110,
+                  116,
+                  97,
+                  105,
+                  110,
+                  45,
+                  99,
+                  111,
+                  110,
+                  102,
+                  105,
+                  103
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "fountain_pulse",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  102,
+                  111,
+                  117,
+                  110,
+                  116,
+                  97,
+                  105,
+                  110,
+                  45,
+                  112,
+                  117,
+                  108,
+                  115,
+                  101
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "fountain_config.active_pulse_id",
+                "account": "FountainConfig"
+              }
+            ]
+          }
+        },
+        {
+          "name": "staker_account",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  115,
+                  116,
+                  97,
+                  107,
+                  101,
+                  114
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "user"
+              }
+            ]
+          }
+        },
+        {
+          "name": "claim_tracker",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  102,
+                  111,
+                  117,
+                  110,
+                  116,
+                  97,
+                  105,
+                  110,
+                  45,
+                  99,
+                  108,
+                  97,
+                  105,
+                  109
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "user"
+              }
+            ]
+          }
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "claim_lp_rewards",
+      "docs": [
+        "Claim LP staking rewards (GrienApple + BluApple)."
+      ],
+      "discriminator": [
+        130,
+        185,
+        69,
+        158,
+        54,
+        47,
+        70,
+        79
+      ],
+      "accounts": [
+        {
+          "name": "user",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "garden",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  103,
+                  97,
+                  114,
+                  100,
+                  101,
+                  110
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "lp_garden",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  108,
+                  112,
+                  45,
+                  103,
+                  97,
+                  114,
+                  100,
+                  101,
+                  110
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "lp_staker",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  108,
+                  112,
+                  45,
+                  115,
+                  116,
+                  97,
+                  107,
+                  101,
+                  114
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "user"
+              }
+            ]
+          }
+        },
+        {
+          "name": "blu_ledger",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  98,
+                  108,
+                  117,
+                  45,
+                  108,
+                  101,
+                  100,
+                  103,
+                  101,
+                  114
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "user"
+              }
+            ]
+          }
+        },
+        {
+          "name": "epoch_state"
+        },
+        {
+          "name": "lp_grien_vault",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  108,
+                  112,
+                  45,
+                  103,
+                  114,
+                  105,
+                  101,
+                  110,
+                  45,
+                  118,
+                  97,
+                  117,
+                  108,
+                  116
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "user_grien_ata",
+          "writable": true
+        },
+        {
+          "name": "token_program",
+          "address": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "claim_rewards",
+      "docs": [
+        "Claim GrienApple + accrue BluApple for one completed epoch."
+      ],
+      "discriminator": [
+        4,
+        144,
+        132,
+        71,
+        116,
+        23,
+        151,
+        80
+      ],
+      "accounts": [
+        {
+          "name": "staker",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "garden",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  103,
+                  97,
+                  114,
+                  100,
+                  101,
+                  110
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "staker_account",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  115,
+                  116,
+                  97,
+                  107,
+                  101,
+                  114
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "staker"
+              }
+            ]
+          }
+        },
+        {
+          "name": "blu_ledger",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  98,
+                  108,
+                  117,
+                  45,
+                  108,
+                  101,
+                  100,
+                  103,
+                  101,
+                  114
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "staker"
+              }
+            ]
+          }
+        },
+        {
+          "name": "epoch_state",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  101,
+                  112,
+                  111,
+                  99,
+                  104
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "staker_account.next_claim_epoch",
+                "account": "StakerAccount"
+              }
+            ]
+          }
+        },
+        {
+          "name": "garden_grien_vault",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  103,
+                  97,
+                  114,
+                  100,
+                  101,
+                  110,
+                  45,
+                  103,
+                  114,
+                  105,
+                  101,
+                  110,
+                  45,
+                  118,
+                  97,
+                  117,
+                  108,
+                  116
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "staker_grien_ata",
+          "writable": true
+        },
+        {
+          "name": "token_program",
+          "address": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "crank_epoch",
+      "docs": [
+        "Permissionless crank: advance epoch, mint GrienApple emissions, snapshot state."
+      ],
+      "discriminator": [
+        172,
+        100,
+        58,
+        85,
+        143,
+        73,
+        244,
+        103
+      ],
+      "accounts": [
+        {
+          "name": "cranker",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "garden",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  103,
+                  97,
+                  114,
+                  100,
+                  101,
+                  110
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "epoch_state",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  101,
+                  112,
+                  111,
+                  99,
+                  104
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "garden.current_epoch",
+                "account": "GardenState"
+              }
+            ]
+          }
+        },
+        {
+          "name": "grien_mint",
+          "writable": true
+        },
+        {
+          "name": "mint_authority",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  103,
+                  114,
+                  105,
+                  101,
+                  110,
+                  45,
+                  109,
+                  105,
+                  110,
+                  116,
+                  45,
+                  97,
+                  117,
+                  116,
+                  104,
+                  111,
+                  114,
+                  105,
+                  116,
+                  121
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "garden_grien_vault",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  103,
+                  97,
+                  114,
+                  100,
+                  101,
+                  110,
+                  45,
+                  103,
+                  114,
+                  105,
+                  101,
+                  110,
+                  45,
+                  118,
+                  97,
+                  117,
+                  108,
+                  116
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "token_program",
+          "address": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "crank_lp_epoch",
+      "docs": [
+        "Permissionless crank: mint LP pool's 20% GrienApple emission."
+      ],
+      "discriminator": [
+        223,
+        219,
+        240,
+        117,
+        241,
+        201,
+        144,
+        12
+      ],
+      "accounts": [
+        {
+          "name": "cranker",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "garden",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  103,
+                  97,
+                  114,
+                  100,
+                  101,
+                  110
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "lp_garden",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  108,
+                  112,
+                  45,
+                  103,
+                  97,
+                  114,
+                  100,
+                  101,
+                  110
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "epoch_state",
+          "docs": [
+            "The just-cranked epoch state (read to get emission amount)"
+          ]
+        },
+        {
+          "name": "grien_mint",
+          "writable": true
+        },
+        {
+          "name": "mint_authority",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  103,
+                  114,
+                  105,
+                  101,
+                  110,
+                  45,
+                  109,
+                  105,
+                  110,
+                  116,
+                  45,
+                  97,
+                  117,
+                  116,
+                  104,
+                  111,
+                  114,
+                  105,
+                  116,
+                  121
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "lp_grien_vault",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  108,
+                  112,
+                  45,
+                  103,
+                  114,
+                  105,
+                  101,
+                  110,
+                  45,
+                  118,
+                  97,
+                  117,
+                  108,
+                  116
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "token_program",
+          "address": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "distribute_treasury",
+      "docs": [
+        "Distribute SOL to treasury/fountain/buyback vaults per split."
+      ],
+      "discriminator": [
+        154,
+        96,
+        186,
+        42,
+        124,
+        189,
+        206,
+        47
+      ],
+      "accounts": [
+        {
+          "name": "authority",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "garden",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  103,
+                  97,
+                  114,
+                  100,
+                  101,
+                  110
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "treasury_config",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  116,
+                  114,
+                  101,
+                  97,
+                  115,
+                  117,
+                  114,
+                  121,
+                  45,
+                  99,
+                  111,
+                  110,
+                  102,
+                  105,
+                  103
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "treasury_vault",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  116,
+                  114,
+                  101,
+                  97,
+                  115,
+                  117,
+                  114,
+                  121,
+                  45,
+                  115,
+                  111,
+                  108
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "fountain_vault",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  102,
+                  111,
+                  117,
+                  110,
+                  116,
+                  97,
+                  105,
+                  110,
+                  45,
+                  115,
+                  111,
+                  108
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "buyback_vault",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  98,
+                  117,
+                  121,
+                  98,
+                  97,
+                  99,
+                  107,
+                  45,
+                  115,
+                  111,
+                  108
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "amount",
+          "type": "u64"
+        }
+      ]
+    },
+    {
+      "name": "fund_bank_treasury",
+      "docs": [
+        "Fund the Bank's GrienApple treasury reserve."
+      ],
+      "discriminator": [
+        34,
+        139,
+        65,
+        171,
+        204,
+        94,
+        91,
+        221
+      ],
+      "accounts": [
+        {
+          "name": "authority",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "garden",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  103,
+                  97,
+                  114,
+                  100,
+                  101,
+                  110
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "bank_config",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  98,
+                  97,
+                  110,
+                  107,
+                  45,
+                  99,
+                  111,
+                  110,
+                  102,
+                  105,
+                  103
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "authority_grien_ata",
+          "docs": [
+            "Authority's GrienApple token account (source)"
+          ],
+          "writable": true
+        },
+        {
+          "name": "bank_grien_treasury",
+          "docs": [
+            "Bank treasury GrienApple vault (destination)"
+          ],
+          "writable": true
+        },
+        {
+          "name": "token_program",
+          "address": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
+        }
+      ],
+      "args": [
+        {
+          "name": "amount",
+          "type": "u64"
+        }
+      ]
+    },
+    {
+      "name": "harvest_blu",
+      "docs": [
+        "Harvest ripened BluApple into GrienApple via gameplay action."
+      ],
+      "discriminator": [
+        251,
+        250,
+        233,
+        217,
+        105,
+        68,
+        237,
+        29
+      ],
+      "accounts": [
+        {
+          "name": "user",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "garden",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  103,
+                  97,
+                  114,
+                  100,
+                  101,
+                  110
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "harvest_config",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  104,
+                  97,
+                  114,
+                  118,
+                  101,
+                  115,
+                  116,
+                  45,
+                  99,
+                  111,
+                  110,
+                  102,
+                  105,
+                  103
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "harvest_tracker",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  104,
+                  97,
+                  114,
+                  118,
+                  101,
+                  115,
+                  116,
+                  45,
+                  116,
+                  114,
+                  97,
+                  99,
+                  107,
+                  101,
+                  114
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "user"
+              }
+            ]
+          }
+        },
+        {
+          "name": "blu_ledger",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  98,
+                  108,
+                  117,
+                  45,
+                  108,
+                  101,
+                  100,
+                  103,
+                  101,
+                  114
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "user"
+              }
+            ]
+          }
+        },
+        {
+          "name": "grien_mint",
+          "writable": true
+        },
+        {
+          "name": "mint_authority",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  103,
+                  114,
+                  105,
+                  101,
+                  110,
+                  45,
+                  109,
+                  105,
+                  110,
+                  116,
+                  45,
+                  97,
+                  117,
+                  116,
+                  104,
+                  111,
+                  114,
+                  105,
+                  116,
+                  121
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "user_grien_ata",
+          "writable": true
+        },
+        {
+          "name": "token_program",
+          "address": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "action_type",
+          "type": "u8"
+        },
+        {
+          "name": "blu_amount",
+          "type": "u64"
+        }
+      ]
+    },
+    {
+      "name": "initialize_bank",
+      "docs": [
+        "Initialize the Bank redemption system."
+      ],
+      "discriminator": [
+        217,
+        55,
+        77,
+        45,
+        245,
+        197,
+        75,
+        140
+      ],
+      "accounts": [
+        {
+          "name": "authority",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "garden",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  103,
+                  97,
+                  114,
+                  100,
+                  101,
+                  110
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "bank_config",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  98,
+                  97,
+                  110,
+                  107,
+                  45,
+                  99,
+                  111,
+                  110,
+                  102,
+                  105,
+                  103
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "bank_grien_treasury",
+          "docs": [
+            "PDA token account holding GrienApple treasury reserve for bank redemptions"
+          ],
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  98,
+                  97,
+                  110,
+                  107,
+                  45,
+                  103,
+                  114,
+                  105,
+                  101,
+                  110,
+                  45,
+                  116,
+                  114,
+                  101,
+                  97,
+                  115,
+                  117,
+                  114,
+                  121
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "grien_mint"
+        },
+        {
+          "name": "token_program",
+          "address": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "grien_twap_price",
+          "type": "u64"
+        },
+        {
+          "name": "daily_wallet_cap",
+          "type": "u64"
+        },
+        {
+          "name": "weekly_protocol_cap",
+          "type": "u64"
+        }
+      ]
+    },
+    {
+      "name": "initialize_fountain",
+      "docs": [
+        "Initialize the Fountain with pulse threshold."
+      ],
+      "discriminator": [
+        192,
+        8,
+        201,
+        199,
+        196,
+        214,
+        244,
+        57
+      ],
+      "accounts": [
+        {
+          "name": "authority",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "garden",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  103,
+                  97,
+                  114,
+                  100,
+                  101,
+                  110
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "fountain_config",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  102,
+                  111,
+                  117,
+                  110,
+                  116,
+                  97,
+                  105,
+                  110,
+                  45,
+                  99,
+                  111,
+                  110,
+                  102,
+                  105,
+                  103
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "fountain_vault",
+          "docs": [
+            "The fountain SOL vault from Treasury Splitter"
+          ],
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  102,
+                  111,
+                  117,
+                  110,
+                  116,
+                  97,
+                  105,
+                  110,
+                  45,
+                  115,
+                  111,
+                  108
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "pulse_threshold",
+          "type": "u64"
+        }
+      ]
+    },
+    {
+      "name": "initialize_garden",
+      "docs": [
+        "Initialize the Garden: global state, GrienApple vault, epoch zero.",
+        "epoch_duration_secs: 86400 for production (24h), lower for testnet."
+      ],
+      "discriminator": [
+        23,
+        148,
+        216,
+        67,
+        46,
+        4,
+        251,
+        207
+      ],
+      "accounts": [
+        {
+          "name": "authority",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "garden",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  103,
+                  97,
+                  114,
+                  100,
+                  101,
+                  110
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "grien_mint",
+          "docs": [
+            "GrienApple SPL mint (created off-chain, authority = mint_authority PDA)"
+          ]
+        },
+        {
+          "name": "mint_authority",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  103,
+                  114,
+                  105,
+                  101,
+                  110,
+                  45,
+                  109,
+                  105,
+                  110,
+                  116,
+                  45,
+                  97,
+                  117,
+                  116,
+                  104,
+                  111,
+                  114,
+                  105,
+                  116,
+                  121
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "garden_sol",
+          "docs": [
+            "Program-owned PDA that holds raw SOL deposits"
+          ],
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  103,
+                  97,
+                  114,
+                  100,
+                  101,
+                  110,
+                  45,
+                  115,
+                  111,
+                  108
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "garden_grien_vault",
+          "docs": [
+            "Token account to hold minted-but-unclaimed GrienApple"
+          ],
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  103,
+                  97,
+                  114,
+                  100,
+                  101,
+                  110,
+                  45,
+                  103,
+                  114,
+                  105,
+                  101,
+                  110,
+                  45,
+                  118,
+                  97,
+                  117,
+                  108,
+                  116
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "token_program",
+          "address": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "epoch_duration_secs",
+          "type": "i64"
+        }
+      ]
+    },
+    {
+      "name": "initialize_harvest_config",
+      "docs": [
+        "Initialize the Harvest/Conversion Gate configuration."
+      ],
+      "discriminator": [
+        231,
+        11,
+        210,
+        80,
+        162,
+        118,
+        238,
+        204
+      ],
+      "accounts": [
+        {
+          "name": "authority",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "garden",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  103,
+                  97,
+                  114,
+                  100,
+                  101,
+                  110
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "harvest_config",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  104,
+                  97,
+                  114,
+                  118,
+                  101,
+                  115,
+                  116,
+                  45,
+                  99,
+                  111,
+                  110,
+                  102,
+                  105,
+                  103
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "daily_wallet_cap",
+          "type": "u64"
+        },
+        {
+          "name": "global_daily_ceiling",
+          "type": "u64"
+        }
+      ]
+    },
+    {
+      "name": "initialize_lp_garden",
+      "docs": [
+        "Initialize the LP Garden with oracle price."
+      ],
+      "discriminator": [
+        52,
+        73,
+        58,
+        18,
+        161,
+        129,
+        172,
+        24
+      ],
+      "accounts": [
+        {
+          "name": "authority",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "garden",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  103,
+                  97,
+                  114,
+                  100,
+                  101,
+                  110
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "lp_garden",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  108,
+                  112,
+                  45,
+                  103,
+                  97,
+                  114,
+                  100,
+                  101,
+                  110
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "lp_mint",
+          "docs": [
+            "The Raydium LP token mint"
+          ]
+        },
+        {
+          "name": "lp_vault",
+          "docs": [
+            "PDA token account to hold deposited LP tokens"
+          ],
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  108,
+                  112,
+                  45,
+                  118,
+                  97,
+                  117,
+                  108,
+                  116
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "lp_grien_vault",
+          "docs": [
+            "PDA token account to hold GrienApple for LP pool distribution"
+          ],
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  108,
+                  112,
+                  45,
+                  103,
+                  114,
+                  105,
+                  101,
+                  110,
+                  45,
+                  118,
+                  97,
+                  117,
+                  108,
+                  116
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "grien_mint"
+        },
+        {
+          "name": "token_program",
+          "address": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "sol_price_per_lp",
+          "type": "u64"
+        }
+      ]
+    },
+    {
+      "name": "initialize_treasury",
+      "docs": [
+        "Initialize the Treasury Splitter with 3 SOL vaults."
+      ],
+      "discriminator": [
+        124,
+        186,
+        211,
+        195,
+        85,
+        165,
+        129,
+        166
+      ],
+      "accounts": [
+        {
+          "name": "authority",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "garden",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  103,
+                  97,
+                  114,
+                  100,
+                  101,
+                  110
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "treasury_config",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  116,
+                  114,
+                  101,
+                  97,
+                  115,
+                  117,
+                  114,
+                  121,
+                  45,
+                  99,
+                  111,
+                  110,
+                  102,
+                  105,
+                  103
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "treasury_vault",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  116,
+                  114,
+                  101,
+                  97,
+                  115,
+                  117,
+                  114,
+                  121,
+                  45,
+                  115,
+                  111,
+                  108
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "fountain_vault",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  102,
+                  111,
+                  117,
+                  110,
+                  116,
+                  97,
+                  105,
+                  110,
+                  45,
+                  115,
+                  111,
+                  108
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "buyback_vault",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  98,
+                  117,
+                  121,
+                  98,
+                  97,
+                  99,
+                  107,
+                  45,
+                  115,
+                  111,
+                  108
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "treasury_bps",
+          "type": "u16"
+        },
+        {
+          "name": "fountain_bps",
+          "type": "u16"
+        },
+        {
+          "name": "buyback_bps",
+          "type": "u16"
+        }
+      ]
+    },
+    {
+      "name": "redeem_blu",
+      "docs": [
+        "Redeem BluApple at the Bank for discounted GrienApple."
+      ],
+      "discriminator": [
+        102,
+        60,
+        185,
+        141,
+        228,
+        129,
+        20,
+        117
+      ],
+      "accounts": [
+        {
+          "name": "user",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "garden",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  103,
+                  97,
+                  114,
+                  100,
+                  101,
+                  110
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "bank_config",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  98,
+                  97,
+                  110,
+                  107,
+                  45,
+                  99,
+                  111,
+                  110,
+                  102,
+                  105,
+                  103
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "bank_tracker",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  98,
+                  97,
+                  110,
+                  107,
+                  45,
+                  116,
+                  114,
+                  97,
+                  99,
+                  107,
+                  101,
+                  114
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "user"
+              }
+            ]
+          }
+        },
+        {
+          "name": "blu_ledger",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  98,
+                  108,
+                  117,
+                  45,
+                  108,
+                  101,
+                  100,
+                  103,
+                  101,
+                  114
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "user"
+              }
+            ]
+          }
+        },
+        {
+          "name": "bank_grien_treasury",
+          "docs": [
+            "Bank treasury GrienApple vault (source of discounted GrienApple)"
+          ],
+          "writable": true
+        },
+        {
+          "name": "user_grien_ata",
+          "docs": [
+            "User's GrienApple ATA (destination)"
+          ],
+          "writable": true
+        },
+        {
+          "name": "token_program",
+          "address": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "blu_amount",
+          "type": "u64"
+        }
+      ]
+    },
+    {
+      "name": "stake_lp",
+      "docs": [
+        "Stake LP tokens with lock tier (min 30 days)."
+      ],
+      "discriminator": [
+        48,
+        168,
+        125,
+        78,
+        82,
+        71,
+        152,
+        117
+      ],
+      "accounts": [
+        {
+          "name": "user",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "garden",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  103,
+                  97,
+                  114,
+                  100,
+                  101,
+                  110
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "lp_garden",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  108,
+                  112,
+                  45,
+                  103,
+                  97,
+                  114,
+                  100,
+                  101,
+                  110
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "lp_staker",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  108,
+                  112,
+                  45,
+                  115,
+                  116,
+                  97,
+                  107,
+                  101,
+                  114
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "user"
+              }
+            ]
+          }
+        },
+        {
+          "name": "blu_ledger",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  98,
+                  108,
+                  117,
+                  45,
+                  108,
+                  101,
+                  100,
+                  103,
+                  101,
+                  114
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "user"
+              }
+            ]
+          }
+        },
+        {
+          "name": "user_lp_ata",
+          "docs": [
+            "User's LP token ATA (source)"
+          ],
+          "writable": true
+        },
+        {
+          "name": "lp_vault",
+          "docs": [
+            "PDA vault holding deposited LP tokens"
+          ],
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  108,
+                  112,
+                  45,
+                  118,
+                  97,
+                  117,
+                  108,
+                  116
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "token_program",
+          "address": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "amount",
+          "type": "u64"
+        },
+        {
+          "name": "lock_tier",
+          "type": "u8"
+        }
+      ]
+    },
+    {
+      "name": "stake_sol",
+      "docs": [
+        "Stake SOL into the LST Garden with an optional lock tier."
+      ],
+      "discriminator": [
+        200,
+        38,
+        157,
+        155,
+        245,
+        57,
+        236,
+        168
+      ],
+      "accounts": [
+        {
+          "name": "staker",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "garden",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  103,
+                  97,
+                  114,
+                  100,
+                  101,
+                  110
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "garden_sol",
+          "docs": [
+            "Program-owned PDA that holds raw SOL deposits"
+          ],
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  103,
+                  97,
+                  114,
+                  100,
+                  101,
+                  110,
+                  45,
+                  115,
+                  111,
+                  108
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "staker_account",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  115,
+                  116,
+                  97,
+                  107,
+                  101,
+                  114
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "staker"
+              }
+            ]
+          }
+        },
+        {
+          "name": "blu_ledger",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  98,
+                  108,
+                  117,
+                  45,
+                  108,
+                  101,
+                  100,
+                  103,
+                  101,
+                  114
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "staker"
+              }
+            ]
+          }
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "amount",
+          "type": "u64"
+        },
+        {
+          "name": "lock_tier",
+          "type": "u8"
+        }
+      ]
+    },
+    {
+      "name": "unstake_lp",
+      "docs": [
+        "Unstake LP tokens. Pass 0 for full withdrawal."
+      ],
+      "discriminator": [
+        114,
+        4,
+        7,
+        206,
+        251,
+        176,
+        233,
+        119
+      ],
+      "accounts": [
+        {
+          "name": "user",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "lp_garden",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  108,
+                  112,
+                  45,
+                  103,
+                  97,
+                  114,
+                  100,
+                  101,
+                  110
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "lp_staker",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  108,
+                  112,
+                  45,
+                  115,
+                  116,
+                  97,
+                  107,
+                  101,
+                  114
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "user"
+              }
+            ]
+          }
+        },
+        {
+          "name": "lp_vault",
+          "docs": [
+            "PDA vault holding LP tokens"
+          ],
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  108,
+                  112,
+                  45,
+                  118,
+                  97,
+                  117,
+                  108,
+                  116
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "user_lp_ata",
+          "docs": [
+            "User's LP token ATA (destination)"
+          ],
+          "writable": true
+        },
+        {
+          "name": "token_program",
+          "address": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
+        }
+      ],
+      "args": [
+        {
+          "name": "amount",
+          "type": "u64"
+        }
+      ]
+    },
+    {
+      "name": "unstake_sol",
+      "docs": [
+        "Unstake SOL from the LST Garden. Pass 0 for full withdrawal."
+      ],
+      "discriminator": [
+        70,
+        150,
+        140,
+        208,
+        166,
+        13,
+        252,
+        150
+      ],
+      "accounts": [
+        {
+          "name": "staker",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "garden",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  103,
+                  97,
+                  114,
+                  100,
+                  101,
+                  110
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "garden_sol",
+          "docs": [
+            "Program-owned PDA that holds raw SOL deposits"
+          ],
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  103,
+                  97,
+                  114,
+                  100,
+                  101,
+                  110,
+                  45,
+                  115,
+                  111,
+                  108
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "staker_account",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  115,
+                  116,
+                  97,
+                  107,
+                  101,
+                  114
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "staker"
+              }
+            ]
+          }
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "amount",
+          "type": "u64"
+        }
+      ]
+    },
+    {
+      "name": "update_bank_config",
+      "docs": [
+        "Update Bank configuration (TWAP, caps)."
+      ],
+      "discriminator": [
+        98,
+        195,
+        67,
+        76,
+        187,
+        143,
+        229,
+        92
+      ],
+      "accounts": [
+        {
+          "name": "authority",
+          "signer": true
+        },
+        {
+          "name": "garden",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  103,
+                  97,
+                  114,
+                  100,
+                  101,
+                  110
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "bank_config",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  98,
+                  97,
+                  110,
+                  107,
+                  45,
+                  99,
+                  111,
+                  110,
+                  102,
+                  105,
+                  103
+                ]
+              }
+            ]
+          }
+        }
+      ],
+      "args": [
+        {
+          "name": "grien_twap_price",
+          "type": {
+            "option": "u64"
+          }
+        },
+        {
+          "name": "daily_wallet_cap",
+          "type": {
+            "option": "u64"
+          }
+        },
+        {
+          "name": "weekly_protocol_cap",
+          "type": {
+            "option": "u64"
+          }
+        }
+      ]
+    },
+    {
+      "name": "update_fountain_config",
+      "docs": [
+        "Update fountain configuration (threshold)."
+      ],
+      "discriminator": [
+        43,
+        47,
+        121,
+        14,
+        8,
+        243,
+        94,
+        165
+      ],
+      "accounts": [
+        {
+          "name": "authority",
+          "signer": true
+        },
+        {
+          "name": "garden",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  103,
+                  97,
+                  114,
+                  100,
+                  101,
+                  110
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "fountain_config",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  102,
+                  111,
+                  117,
+                  110,
+                  116,
+                  97,
+                  105,
+                  110,
+                  45,
+                  99,
+                  111,
+                  110,
+                  102,
+                  105,
+                  103
+                ]
+              }
+            ]
+          }
+        }
+      ],
+      "args": [
+        {
+          "name": "pulse_threshold",
+          "type": {
+            "option": "u64"
+          }
+        }
+      ]
+    },
+    {
+      "name": "update_harvest_config",
+      "docs": [
+        "Update harvest configuration (governance)."
+      ],
+      "discriminator": [
+        90,
+        150,
+        210,
+        38,
+        119,
+        16,
+        143,
+        241
+      ],
+      "accounts": [
+        {
+          "name": "authority",
+          "signer": true
+        },
+        {
+          "name": "garden",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  103,
+                  97,
+                  114,
+                  100,
+                  101,
+                  110
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "harvest_config",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  104,
+                  97,
+                  114,
+                  118,
+                  101,
+                  115,
+                  116,
+                  45,
+                  99,
+                  111,
+                  110,
+                  102,
+                  105,
+                  103
+                ]
+              }
+            ]
+          }
+        }
+      ],
+      "args": [
+        {
+          "name": "daily_wallet_cap",
+          "type": {
+            "option": "u64"
+          }
+        },
+        {
+          "name": "global_daily_ceiling",
+          "type": {
+            "option": "u64"
+          }
+        }
+      ]
+    },
+    {
+      "name": "update_lp_price",
+      "docs": [
+        "Update LP price oracle (admin)."
+      ],
+      "discriminator": [
+        131,
+        1,
+        243,
+        67,
+        8,
+        233,
+        242,
+        84
+      ],
+      "accounts": [
+        {
+          "name": "authority",
+          "signer": true
+        },
+        {
+          "name": "garden",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  103,
+                  97,
+                  114,
+                  100,
+                  101,
+                  110
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "lp_garden",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  108,
+                  112,
+                  45,
+                  103,
+                  97,
+                  114,
+                  100,
+                  101,
+                  110
+                ]
+              }
+            ]
+          }
+        }
+      ],
+      "args": [
+        {
+          "name": "sol_price_per_lp",
+          "type": "u64"
+        }
+      ]
+    },
+    {
+      "name": "update_treasury_config",
+      "docs": [
+        "Update treasury split ratios (must sum to 10000)."
+      ],
+      "discriminator": [
+        129,
+        100,
+        213,
+        18,
+        68,
+        118,
+        249,
+        154
+      ],
+      "accounts": [
+        {
+          "name": "authority",
+          "signer": true
+        },
+        {
+          "name": "garden",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  103,
+                  97,
+                  114,
+                  100,
+                  101,
+                  110
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "treasury_config",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  116,
+                  114,
+                  101,
+                  97,
+                  115,
+                  117,
+                  114,
+                  121,
+                  45,
+                  99,
+                  111,
+                  110,
+                  102,
+                  105,
+                  103
+                ]
+              }
+            ]
+          }
+        }
+      ],
+      "args": [
+        {
+          "name": "treasury_bps",
+          "type": "u16"
+        },
+        {
+          "name": "fountain_bps",
+          "type": "u16"
+        },
+        {
+          "name": "buyback_bps",
+          "type": "u16"
+        }
+      ]
+    },
+    {
+      "name": "view_ripened",
+      "docs": [
+        "View total ripened (harvestable) BluApple for a user."
+      ],
+      "discriminator": [
+        238,
+        24,
+        145,
+        242,
+        202,
+        177,
+        156,
+        200
+      ],
+      "accounts": [
+        {
+          "name": "blu_ledger"
+        }
+      ],
+      "args": []
+    }
+  ],
+  "accounts": [
+    {
+      "name": "BankConfig",
+      "discriminator": [
+        118,
+        28,
+        101,
+        88,
+        239,
+        66,
+        19,
+        8
+      ]
+    },
+    {
+      "name": "BankUserTracker",
+      "discriminator": [
+        33,
+        140,
+        176,
+        95,
+        76,
+        181,
+        189,
+        187
+      ]
+    },
+    {
+      "name": "BluLedger",
+      "discriminator": [
+        164,
+        97,
+        244,
+        129,
+        207,
+        223,
+        94,
+        68
+      ]
+    },
+    {
+      "name": "EpochState",
+      "discriminator": [
+        191,
+        63,
+        139,
+        237,
+        144,
+        12,
+        223,
+        210
+      ]
+    },
+    {
+      "name": "FountainClaimTracker",
+      "discriminator": [
+        58,
+        209,
+        177,
+        0,
+        181,
+        26,
+        39,
+        18
+      ]
+    },
+    {
+      "name": "FountainConfig",
+      "discriminator": [
+        238,
+        120,
+        239,
+        19,
+        190,
+        156,
+        244,
+        255
+      ]
+    },
+    {
+      "name": "FountainPulse",
+      "discriminator": [
+        206,
+        139,
+        10,
+        7,
+        86,
+        63,
+        62,
+        124
+      ]
+    },
+    {
+      "name": "GardenState",
+      "discriminator": [
+        191,
+        224,
+        150,
+        244,
+        221,
+        220,
+        99,
+        45
+      ]
+    },
+    {
+      "name": "HarvestConfig",
+      "discriminator": [
+        52,
+        88,
+        69,
+        106,
+        103,
+        140,
+        132,
+        134
+      ]
+    },
+    {
+      "name": "HarvestTracker",
+      "discriminator": [
+        226,
+        28,
+        231,
+        123,
+        70,
+        105,
+        227,
+        120
+      ]
+    },
+    {
+      "name": "LpGardenState",
+      "discriminator": [
+        150,
+        128,
+        203,
+        14,
+        236,
+        204,
+        227,
+        83
+      ]
+    },
+    {
+      "name": "LpStaker",
+      "discriminator": [
+        5,
+        129,
+        193,
+        226,
+        6,
+        69,
+        155,
+        62
+      ]
+    },
+    {
+      "name": "SolVault",
+      "discriminator": [
+        21,
+        132,
+        230,
+        103,
+        19,
+        209,
+        129,
+        248
+      ]
+    },
+    {
+      "name": "StakerAccount",
+      "discriminator": [
+        12,
+        152,
+        43,
+        218,
+        164,
+        11,
+        150,
+        174
+      ]
+    },
+    {
+      "name": "TreasuryConfig",
+      "discriminator": [
+        124,
+        54,
+        212,
+        227,
+        213,
+        189,
+        168,
+        41
+      ]
+    },
+    {
+      "name": "TreasurySplitVault",
+      "discriminator": [
+        68,
+        214,
+        48,
+        201,
+        67,
+        215,
+        33,
+        114
+      ]
+    }
+  ],
+  "events": [
+    {
+      "name": "FountainPulseEvent",
+      "discriminator": [
+        194,
+        253,
+        90,
+        218,
+        249,
+        240,
+        87,
+        78
+      ]
+    },
+    {
+      "name": "FountainRewardEvent",
+      "discriminator": [
+        78,
+        58,
+        19,
+        112,
+        124,
+        117,
+        188,
+        197
+      ]
+    },
+    {
+      "name": "RipenedEvent",
+      "discriminator": [
+        47,
+        247,
+        84,
+        101,
+        139,
+        124,
+        176,
+        205
+      ]
+    }
+  ],
+  "errors": [
+    {
+      "code": 6000,
+      "name": "ZeroAmount",
+      "msg": "Amount must be greater than zero"
+    },
+    {
+      "code": 6001,
+      "name": "InvalidLockTier",
+      "msg": "Invalid lock tier (must be 0-3)"
+    },
+    {
+      "code": 6002,
+      "name": "LockActive",
+      "msg": "Lock period has not expired"
+    },
+    {
+      "code": 6003,
+      "name": "NothingStaked",
+      "msg": "Nothing staked"
+    },
+    {
+      "code": 6004,
+      "name": "InsufficientStake",
+      "msg": "Insufficient staked balance"
+    },
+    {
+      "code": 6005,
+      "name": "EpochNotElapsed",
+      "msg": "Epoch duration has not elapsed (24h)"
+    },
+    {
+      "code": 6006,
+      "name": "MintCapReached",
+      "msg": "GrienApple mint cap of 1B reached"
+    },
+    {
+      "code": 6007,
+      "name": "EpochMismatch",
+      "msg": "Epoch number mismatch — claim sequentially"
+    },
+    {
+      "code": 6008,
+      "name": "EpochNotFinalized",
+      "msg": "Cannot claim for an epoch not yet finalized"
+    },
+    {
+      "code": 6009,
+      "name": "NotStakeOwner",
+      "msg": "Not the stake owner"
+    },
+    {
+      "code": 6010,
+      "name": "MathOverflow",
+      "msg": "Arithmetic overflow"
+    },
+    {
+      "code": 6011,
+      "name": "InvalidMintAuthority",
+      "msg": "Mint authority does not match GrienApple mint"
+    },
+    {
+      "code": 6012,
+      "name": "CannotChangeLockTier",
+      "msg": "Cannot change lock tier while existing lock is active"
+    },
+    {
+      "code": 6013,
+      "name": "InvalidActionType",
+      "msg": "Invalid gameplay action type"
+    },
+    {
+      "code": 6014,
+      "name": "ActionNotLive",
+      "msg": "Action type not yet live (P1 only supports Garden Tending)"
+    },
+    {
+      "code": 6015,
+      "name": "ActionCapExceeded",
+      "msg": "BluApple amount exceeds action type cap"
+    },
+    {
+      "code": 6016,
+      "name": "DailyWalletCapExceeded",
+      "msg": "Per-wallet daily harvest cap exceeded"
+    },
+    {
+      "code": 6017,
+      "name": "GlobalCeilingReached",
+      "msg": "Protocol-wide daily harvest ceiling reached"
+    },
+    {
+      "code": 6018,
+      "name": "InsufficientRipenedBlu",
+      "msg": "Insufficient ripened BluApple for harvest"
+    },
+    {
+      "code": 6019,
+      "name": "InvalidLpLockTier",
+      "msg": "Invalid LP lock tier (must be 0-2)"
+    },
+    {
+      "code": 6020,
+      "name": "LpLockActive",
+      "msg": "LP lock period has not expired"
+    },
+    {
+      "code": 6021,
+      "name": "NoLpStaked",
+      "msg": "No LP tokens staked"
+    },
+    {
+      "code": 6022,
+      "name": "InsufficientLpBalance",
+      "msg": "Insufficient LP token balance"
+    },
+    {
+      "code": 6023,
+      "name": "DailyRedemptionCapExceeded",
+      "msg": "Daily wallet redemption cap exceeded"
+    },
+    {
+      "code": 6024,
+      "name": "WeeklyProtocolCapExceeded",
+      "msg": "Weekly protocol redemption cap exceeded"
+    },
+    {
+      "code": 6025,
+      "name": "InsufficientTreasuryReserve",
+      "msg": "Insufficient GrienApple reserve in bank treasury"
+    },
+    {
+      "code": 6026,
+      "name": "InvalidTreasurySplit",
+      "msg": "Treasury split shares must sum to 10000 basis points"
+    },
+    {
+      "code": 6027,
+      "name": "ThresholdNotReached",
+      "msg": "Fountain threshold not yet reached"
+    },
+    {
+      "code": 6028,
+      "name": "NoActivePulse",
+      "msg": "No active fountain pulse to claim"
+    },
+    {
+      "code": 6029,
+      "name": "AlreadyClaimed",
+      "msg": "Already claimed this fountain pulse"
+    },
+    {
+      "code": 6030,
+      "name": "NotStaking",
+      "msg": "Must be staking to claim fountain rewards"
+    },
+    {
+      "code": 6031,
+      "name": "Unauthorized",
+      "msg": "Unauthorized: signer is not the garden authority"
+    }
+  ],
+  "types": [
+    {
+      "name": "BankConfig",
+      "docs": [
+        "Global Bank Redemption configuration (Module 10)"
+      ],
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "authority",
+            "docs": [
+              "Authority who can update config"
+            ],
+            "type": "pubkey"
+          },
+          {
+            "name": "garden",
+            "docs": [
+              "Reference to GardenState PDA"
+            ],
+            "type": "pubkey"
+          },
+          {
+            "name": "grien_twap_price",
+            "docs": [
+              "Admin-fed 7-day TWAP: lamports of SOL per 1 GrienApple (raw, 9 dec)"
+            ],
+            "type": "u64"
+          },
+          {
+            "name": "twap_last_update_ts",
+            "docs": [
+              "When TWAP was last updated"
+            ],
+            "type": "i64"
+          },
+          {
+            "name": "daily_wallet_cap",
+            "docs": [
+              "Max BluApple redeemable per wallet per day (raw, 9 dec)"
+            ],
+            "type": "u64"
+          },
+          {
+            "name": "weekly_protocol_cap",
+            "docs": [
+              "Max BluApple redeemable protocol-wide per week (raw, 9 dec)"
+            ],
+            "type": "u64"
+          },
+          {
+            "name": "weekly_protocol_redeemed",
+            "docs": [
+              "Running total BluApple redeemed this week protocol-wide"
+            ],
+            "type": "u64"
+          },
+          {
+            "name": "current_week_start_ts",
+            "docs": [
+              "Timestamp of start of current week for reset logic"
+            ],
+            "type": "i64"
+          },
+          {
+            "name": "treasury_grien_vault",
+            "docs": [
+              "PDA token account holding GrienApple treasury reserve"
+            ],
+            "type": "pubkey"
+          },
+          {
+            "name": "bump",
+            "docs": [
+              "PDA bump seed"
+            ],
+            "type": "u8"
+          }
+        ]
+      }
+    },
+    {
+      "name": "BankUserTracker",
+      "docs": [
+        "Per-user Bank redemption tracking (Module 10)"
+      ],
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "owner",
+            "docs": [
+              "Wallet that owns this tracker"
+            ],
+            "type": "pubkey"
+          },
+          {
+            "name": "today_redeemed",
+            "docs": [
+              "BluApple redeemed today (raw, 9 decimals)"
+            ],
+            "type": "u64"
+          },
+          {
+            "name": "last_reset_day",
+            "docs": [
+              "Day number since genesis for daily reset"
+            ],
+            "type": "u64"
+          },
+          {
+            "name": "week_redemption_count",
+            "docs": [
+              "Number of redemptions this week (for escalating fees)"
+            ],
+            "type": "u8"
+          },
+          {
+            "name": "current_week_number",
+            "docs": [
+              "Week number since genesis for weekly reset"
+            ],
+            "type": "u64"
+          },
+          {
+            "name": "lifetime_redeemed_blu",
+            "docs": [
+              "Lifetime BluApple redeemed"
+            ],
+            "type": "u64"
+          },
+          {
+            "name": "lifetime_received_grien",
+            "docs": [
+              "Lifetime GrienApple received from bank"
+            ],
+            "type": "u64"
+          },
+          {
+            "name": "bump",
+            "docs": [
+              "PDA bump seed"
+            ],
+            "type": "u8"
+          }
+        ]
+      }
+    },
+    {
+      "name": "BluBatch",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "week_id",
+            "docs": [
+              "Week number since garden genesis (monotonic)"
+            ],
+            "type": "u32"
+          },
+          {
+            "name": "earned_ts",
+            "docs": [
+              "Timestamp of first earning in this batch"
+            ],
+            "type": "i64"
+          },
+          {
+            "name": "total_amount",
+            "docs": [
+              "Total BluApple earned in this batch (raw, 9 decimals)"
+            ],
+            "type": "u64"
+          },
+          {
+            "name": "harvested_amount",
+            "docs": [
+              "Amount harvested so far (P1 — starts at 0)"
+            ],
+            "type": "u64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "BluLedger",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "owner",
+            "docs": [
+              "Wallet that owns this ledger"
+            ],
+            "type": "pubkey"
+          },
+          {
+            "name": "total_earned",
+            "docs": [
+              "Lifetime BluApple earned (raw)"
+            ],
+            "type": "u64"
+          },
+          {
+            "name": "total_harvested",
+            "docs": [
+              "Lifetime BluApple harvested (P1 — starts at 0)"
+            ],
+            "type": "u64"
+          },
+          {
+            "name": "batch_count",
+            "docs": [
+              "Number of active batches (0..=52)"
+            ],
+            "type": "u16"
+          },
+          {
+            "name": "head_idx",
+            "docs": [
+              "Index of next write position in the ring buffer"
+            ],
+            "type": "u16"
+          },
+          {
+            "name": "batches",
+            "docs": [
+              "Weekly batch ring buffer (52 slots max)"
+            ],
+            "type": {
+              "vec": {
+                "defined": {
+                  "name": "BluBatch"
+                }
+              }
+            }
+          },
+          {
+            "name": "bump",
+            "docs": [
+              "PDA bump seed"
+            ],
+            "type": "u8"
+          }
+        ]
+      }
+    },
+    {
+      "name": "EpochState",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "epoch",
+            "docs": [
+              "Epoch number"
+            ],
+            "type": "u64"
+          },
+          {
+            "name": "start_ts",
+            "docs": [
+              "Epoch start timestamp"
+            ],
+            "type": "i64"
+          },
+          {
+            "name": "end_ts",
+            "docs": [
+              "Epoch end timestamp"
+            ],
+            "type": "i64"
+          },
+          {
+            "name": "total_weighted_sol",
+            "docs": [
+              "Snapshot of total_weighted_sol at epoch boundary"
+            ],
+            "type": "u128"
+          },
+          {
+            "name": "grien_emitted",
+            "docs": [
+              "GrienApple minted for LST pool this epoch (70% of daily emission)"
+            ],
+            "type": "u64"
+          },
+          {
+            "name": "total_sol_deposited",
+            "docs": [
+              "Snapshot of total_sol_deposited for BluApple calculation"
+            ],
+            "type": "u64"
+          },
+          {
+            "name": "bump",
+            "docs": [
+              "PDA bump seed"
+            ],
+            "type": "u8"
+          }
+        ]
+      }
+    },
+    {
+      "name": "FountainClaimTracker",
+      "docs": [
+        "Per-user fountain claim tracker"
+      ],
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "owner",
+            "docs": [
+              "Wallet owner"
+            ],
+            "type": "pubkey"
+          },
+          {
+            "name": "last_claimed_pulse",
+            "docs": [
+              "Last pulse ID claimed (prevents double-claiming)"
+            ],
+            "type": "u64"
+          },
+          {
+            "name": "lifetime_claims",
+            "docs": [
+              "Lifetime rewards claimed (count)"
+            ],
+            "type": "u64"
+          },
+          {
+            "name": "bump",
+            "docs": [
+              "PDA bump seed"
+            ],
+            "type": "u8"
+          }
+        ]
+      }
+    },
+    {
+      "name": "FountainConfig",
+      "docs": [
+        "Global Fountain Accumulator configuration (Module 12 — P2)",
+        "The Fountain receives 30% of LST yield and converts it into game rewards.",
+        "When accumulated yield crosses the pulse threshold, a pulse fires and",
+        "eligible stakers can claim loot-table rewards."
+      ],
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "authority",
+            "docs": [
+              "Authority (must match garden.authority)"
+            ],
+            "type": "pubkey"
+          },
+          {
+            "name": "garden",
+            "docs": [
+              "Reference to GardenState PDA"
+            ],
+            "type": "pubkey"
+          },
+          {
+            "name": "pulse_threshold",
+            "docs": [
+              "Pulse trigger threshold in lamports (default: 0.25 SOL = 250_000_000)"
+            ],
+            "type": "u64"
+          },
+          {
+            "name": "accumulated",
+            "docs": [
+              "Total lamports accumulated since last pulse"
+            ],
+            "type": "u64"
+          },
+          {
+            "name": "total_pulses",
+            "docs": [
+              "Total pulses fired (monotonic counter)"
+            ],
+            "type": "u64"
+          },
+          {
+            "name": "last_pulse_ts",
+            "docs": [
+              "Timestamp of last pulse"
+            ],
+            "type": "i64"
+          },
+          {
+            "name": "lifetime_accumulated",
+            "docs": [
+              "Total lamports ever fed into the fountain"
+            ],
+            "type": "u64"
+          },
+          {
+            "name": "fountain_vault",
+            "docs": [
+              "Reference to the fountain SOL vault PDA (from Treasury Splitter)"
+            ],
+            "type": "pubkey"
+          },
+          {
+            "name": "active_pulse_id",
+            "docs": [
+              "Current active pulse ID (0 = no active pulse, >0 = pulse in progress)"
+            ],
+            "type": "u64"
+          },
+          {
+            "name": "bump",
+            "docs": [
+              "PDA bump seed"
+            ],
+            "type": "u8"
+          }
+        ]
+      }
+    },
+    {
+      "name": "FountainPulse",
+      "docs": [
+        "Record of a single fountain pulse. Created when threshold is crossed.",
+        "Stakers can claim rewards from this pulse within its claim window."
+      ],
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "pulse_id",
+            "docs": [
+              "Pulse ID (monotonic)"
+            ],
+            "type": "u64"
+          },
+          {
+            "name": "fired_ts",
+            "docs": [
+              "Timestamp when pulse fired"
+            ],
+            "type": "i64"
+          },
+          {
+            "name": "trigger_amount",
+            "docs": [
+              "SOL amount that triggered this pulse"
+            ],
+            "type": "u64"
+          },
+          {
+            "name": "claims_count",
+            "docs": [
+              "Number of reward claims made from this pulse"
+            ],
+            "type": "u32"
+          },
+          {
+            "name": "total_weighted_sol",
+            "docs": [
+              "Total weighted SOL at time of pulse (snapshot for eligibility)"
+            ],
+            "type": "u128"
+          },
+          {
+            "name": "bump",
+            "docs": [
+              "PDA bump seed"
+            ],
+            "type": "u8"
+          }
+        ]
+      }
+    },
+    {
+      "name": "FountainPulseEvent",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "pulse_id",
+            "type": "u64"
+          },
+          {
+            "name": "trigger_amount",
+            "type": "u64"
+          },
+          {
+            "name": "total_pulses",
+            "type": "u64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "FountainRewardEvent",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "user",
+            "type": "pubkey"
+          },
+          {
+            "name": "pulse_id",
+            "type": "u64"
+          },
+          {
+            "name": "reward_type",
+            "type": "u8"
+          },
+          {
+            "name": "reward_name",
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "name": "GardenState",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "authority",
+            "docs": [
+              "Admin who initialized the garden"
+            ],
+            "type": "pubkey"
+          },
+          {
+            "name": "grien_mint",
+            "docs": [
+              "GrienApple SPL mint address"
+            ],
+            "type": "pubkey"
+          },
+          {
+            "name": "total_sol_deposited",
+            "docs": [
+              "Total raw SOL lamports deposited across all stakers"
+            ],
+            "type": "u64"
+          },
+          {
+            "name": "total_weighted_sol",
+            "docs": [
+              "Sum of all weighted stakes (u128 to avoid overflow with large pools)"
+            ],
+            "type": "u128"
+          },
+          {
+            "name": "staker_count",
+            "docs": [
+              "Number of unique stakers"
+            ],
+            "type": "u32"
+          },
+          {
+            "name": "current_epoch",
+            "docs": [
+              "Current epoch number (monotonic)"
+            ],
+            "type": "u64"
+          },
+          {
+            "name": "epoch_start_ts",
+            "docs": [
+              "Timestamp when current epoch started"
+            ],
+            "type": "i64"
+          },
+          {
+            "name": "genesis_ts",
+            "docs": [
+              "Garden creation timestamp (for year/week calculations)"
+            ],
+            "type": "i64"
+          },
+          {
+            "name": "total_grien_minted",
+            "docs": [
+              "Lifetime GrienApple minted (raw with 9 decimals)"
+            ],
+            "type": "u64"
+          },
+          {
+            "name": "epoch_duration_secs",
+            "docs": [
+              "Epoch duration in seconds (86400 for production, lower for testnet)"
+            ],
+            "type": "i64"
+          },
+          {
+            "name": "bump",
+            "docs": [
+              "PDA bump seed"
+            ],
+            "type": "u8"
+          }
+        ]
+      }
+    },
+    {
+      "name": "HarvestConfig",
+      "docs": [
+        "Global configuration for the Harvest/Conversion Gate (Module 7+8)"
+      ],
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "authority",
+            "docs": [
+              "Authority who can update config (must match garden.authority)"
+            ],
+            "type": "pubkey"
+          },
+          {
+            "name": "daily_wallet_cap",
+            "docs": [
+              "Per-wallet daily BluApple→GrienApple cap (raw, 9 decimals)"
+            ],
+            "type": "u64"
+          },
+          {
+            "name": "global_daily_ceiling",
+            "docs": [
+              "Protocol-wide daily ceiling (raw, 9 decimals)"
+            ],
+            "type": "u64"
+          },
+          {
+            "name": "global_today_converted",
+            "docs": [
+              "Running total of BluApple converted globally today"
+            ],
+            "type": "u64"
+          },
+          {
+            "name": "current_day_start_ts",
+            "docs": [
+              "Timestamp of start of current \"day\" for reset logic"
+            ],
+            "type": "i64"
+          },
+          {
+            "name": "garden",
+            "docs": [
+              "Reference back to GardenState PDA"
+            ],
+            "type": "pubkey"
+          },
+          {
+            "name": "bump",
+            "docs": [
+              "PDA bump seed"
+            ],
+            "type": "u8"
+          }
+        ]
+      }
+    },
+    {
+      "name": "HarvestTracker",
+      "docs": [
+        "Per-user tracking for daily harvest conversions (Module 7)"
+      ],
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "owner",
+            "docs": [
+              "Wallet that owns this tracker"
+            ],
+            "type": "pubkey"
+          },
+          {
+            "name": "today_converted",
+            "docs": [
+              "BluApple converted today (raw, 9 decimals)"
+            ],
+            "type": "u64"
+          },
+          {
+            "name": "last_reset_day",
+            "docs": [
+              "Day number since genesis when tracker was last reset"
+            ],
+            "type": "u64"
+          },
+          {
+            "name": "lifetime_converted",
+            "docs": [
+              "Lifetime total BluApple harvested via gameplay"
+            ],
+            "type": "u64"
+          },
+          {
+            "name": "bump",
+            "docs": [
+              "PDA bump seed"
+            ],
+            "type": "u8"
+          }
+        ]
+      }
+    },
+    {
+      "name": "LpGardenState",
+      "docs": [
+        "Global LP Garden state (Module 9)"
+      ],
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "authority",
+            "docs": [
+              "Authority (must match garden.authority)"
+            ],
+            "type": "pubkey"
+          },
+          {
+            "name": "garden",
+            "docs": [
+              "Reference to main GardenState PDA"
+            ],
+            "type": "pubkey"
+          },
+          {
+            "name": "lp_mint",
+            "docs": [
+              "Raydium LP token mint address"
+            ],
+            "type": "pubkey"
+          },
+          {
+            "name": "lp_vault",
+            "docs": [
+              "PDA token account holding deposited LP tokens"
+            ],
+            "type": "pubkey"
+          },
+          {
+            "name": "total_lp_deposited",
+            "docs": [
+              "Total LP tokens deposited"
+            ],
+            "type": "u64"
+          },
+          {
+            "name": "total_weighted_lp",
+            "docs": [
+              "Sum of all weighted LP (for GrienApple distribution)"
+            ],
+            "type": "u128"
+          },
+          {
+            "name": "lp_staker_count",
+            "docs": [
+              "Number of LP stakers"
+            ],
+            "type": "u32"
+          },
+          {
+            "name": "sol_price_per_lp",
+            "docs": [
+              "Admin-fed: lamports of SOL equivalent per 1 LP token (for BluApple calc)"
+            ],
+            "type": "u64"
+          },
+          {
+            "name": "last_price_update_ts",
+            "docs": [
+              "When sol_price_per_lp was last updated"
+            ],
+            "type": "i64"
+          },
+          {
+            "name": "total_lp_grien_minted",
+            "docs": [
+              "Total GrienApple minted for LP pool (separate tracking for cap enforcement)"
+            ],
+            "type": "u64"
+          },
+          {
+            "name": "bump",
+            "docs": [
+              "PDA bump seed"
+            ],
+            "type": "u8"
+          }
+        ]
+      }
+    },
+    {
+      "name": "LpStaker",
+      "docs": [
+        "Per-user LP stake account (Module 9)"
+      ],
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "owner",
+            "docs": [
+              "Wallet that owns this LP stake"
+            ],
+            "type": "pubkey"
+          },
+          {
+            "name": "deposited_lp",
+            "docs": [
+              "LP tokens deposited"
+            ],
+            "type": "u64"
+          },
+          {
+            "name": "lock_tier",
+            "docs": [
+              "Lock tier: 0=30d, 1=90d, 2=180d (no \"no lock\" for LP)"
+            ],
+            "type": "u8"
+          },
+          {
+            "name": "lock_expiry",
+            "docs": [
+              "Unix timestamp when lock expires"
+            ],
+            "type": "i64"
+          },
+          {
+            "name": "grien_multiplier_bps",
+            "docs": [
+              "GrienApple multiplier in basis points (10000 = 1.0x)"
+            ],
+            "type": "u16"
+          },
+          {
+            "name": "blu_multiplier_bps",
+            "docs": [
+              "BluApple multiplier in basis points (10000 = 1.0x)"
+            ],
+            "type": "u16"
+          },
+          {
+            "name": "weighted_lp",
+            "docs": [
+              "Cached weighted LP = deposited_lp * grien_multiplier_bps / 10000"
+            ],
+            "type": "u128"
+          },
+          {
+            "name": "next_claim_epoch",
+            "docs": [
+              "Next epoch to claim rewards for (synced with main garden epochs)"
+            ],
+            "type": "u64"
+          },
+          {
+            "name": "deposit_ts",
+            "docs": [
+              "Timestamp of first deposit"
+            ],
+            "type": "i64"
+          },
+          {
+            "name": "bump",
+            "docs": [
+              "PDA bump seed"
+            ],
+            "type": "u8"
+          }
+        ]
+      }
+    },
+    {
+      "name": "RipenedEvent",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "owner",
+            "type": "pubkey"
+          },
+          {
+            "name": "total_ripened",
+            "type": "u64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "SolVault",
+      "docs": [
+        "Minimal account to make the SOL vault PDA program-owned.",
+        "Holds lamports for stakers' deposited SOL."
+      ],
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "bump",
+            "type": "u8"
+          }
+        ]
+      }
+    },
+    {
+      "name": "StakerAccount",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "owner",
+            "docs": [
+              "Wallet that owns this stake"
+            ],
+            "type": "pubkey"
+          },
+          {
+            "name": "deposited_sol",
+            "docs": [
+              "Raw SOL lamports deposited"
+            ],
+            "type": "u64"
+          },
+          {
+            "name": "lock_tier",
+            "docs": [
+              "Lock tier: 0=None, 1=30d, 2=90d, 3=180d"
+            ],
+            "type": "u8"
+          },
+          {
+            "name": "lock_expiry",
+            "docs": [
+              "Unix timestamp when lock expires (0 if no lock)"
+            ],
+            "type": "i64"
+          },
+          {
+            "name": "grien_multiplier_bps",
+            "docs": [
+              "GrienApple multiplier in basis points (10000 = 1.0x)"
+            ],
+            "type": "u16"
+          },
+          {
+            "name": "blu_multiplier_bps",
+            "docs": [
+              "BluApple multiplier in basis points (10000 = 1.0x)"
+            ],
+            "type": "u16"
+          },
+          {
+            "name": "weighted_sol",
+            "docs": [
+              "Cached weighted SOL = deposited_sol * grien_multiplier_bps / 10000"
+            ],
+            "type": "u128"
+          },
+          {
+            "name": "next_claim_epoch",
+            "docs": [
+              "Next epoch to claim rewards for"
+            ],
+            "type": "u64"
+          },
+          {
+            "name": "deposit_ts",
+            "docs": [
+              "Timestamp of first deposit"
+            ],
+            "type": "i64"
+          },
+          {
+            "name": "bump",
+            "docs": [
+              "PDA bump seed"
+            ],
+            "type": "u8"
+          }
+        ]
+      }
+    },
+    {
+      "name": "TreasuryConfig",
+      "docs": [
+        "Global Treasury Splitter configuration (Module 11)"
+      ],
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "authority",
+            "docs": [
+              "Authority (must match garden.authority)"
+            ],
+            "type": "pubkey"
+          },
+          {
+            "name": "garden",
+            "docs": [
+              "Reference to GardenState PDA"
+            ],
+            "type": "pubkey"
+          },
+          {
+            "name": "treasury_share_bps",
+            "docs": [
+              "Treasury share in basis points (default 5000 = 50%)"
+            ],
+            "type": "u16"
+          },
+          {
+            "name": "fountain_share_bps",
+            "docs": [
+              "Fountain share in basis points (default 3000 = 30%)"
+            ],
+            "type": "u16"
+          },
+          {
+            "name": "buyback_share_bps",
+            "docs": [
+              "Buyback share in basis points (default 2000 = 20%)"
+            ],
+            "type": "u16"
+          },
+          {
+            "name": "treasury_vault",
+            "docs": [
+              "Treasury SOL vault PDA"
+            ],
+            "type": "pubkey"
+          },
+          {
+            "name": "fountain_vault",
+            "docs": [
+              "Fountain SOL vault PDA"
+            ],
+            "type": "pubkey"
+          },
+          {
+            "name": "buyback_vault",
+            "docs": [
+              "Buyback SOL vault PDA"
+            ],
+            "type": "pubkey"
+          },
+          {
+            "name": "total_distributed",
+            "docs": [
+              "Lifetime lamports distributed"
+            ],
+            "type": "u64"
+          },
+          {
+            "name": "bump",
+            "docs": [
+              "PDA bump seed"
+            ],
+            "type": "u8"
+          }
+        ]
+      }
+    },
+    {
+      "name": "TreasurySplitVault",
+      "docs": [
+        "Minimal PDA marker account for treasury split vaults.",
+        "Holds SOL lamports for treasury/fountain/buyback.",
+        "Same pattern as SolVault from P0."
+      ],
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "bump",
+            "type": "u8"
+          }
+        ]
+      }
+    }
+  ]
+}

@@ -1,26 +1,83 @@
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Inter:wght@300;400;500;600;700&display=swap');
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #1A1A2E;
+  --foreground: #F5E6CC;
+  --o7-dark: #1A1A2E;
+  --o7-green-deep: #1B4332;
+  --o7-green-mid: #2D6A4F;
+  --o7-teal: #40916C;
+  --o7-gold: #B5851B;
+  --o7-earth: #8B6914;
+  --o7-cream: #F5E6CC;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-o7-dark: #1A1A2E;
+  --color-o7-green-deep: #1B4332;
+  --color-o7-green-mid: #2D6A4F;
+  --color-o7-teal: #40916C;
+  --color-o7-gold: #B5851B;
+  --color-o7-earth: #8B6914;
+  --color-o7-cream: #F5E6CC;
+  --font-pixel: 'Press Start 2P', monospace;
+  --font-body: 'Inter', sans-serif;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  scroll-behavior: smooth;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: 'Inter', sans-serif;
+}
+
+/* Pixel font for headings */
+.font-pixel {
+  font-family: 'Press Start 2P', monospace;
+}
+
+/* RPG panel styling */
+.rpg-panel {
+  background: linear-gradient(180deg, rgba(27,67,50,0.9) 0%, rgba(26,26,46,0.95) 100%);
+  border: 2px solid var(--o7-teal);
+  box-shadow: 0 0 20px rgba(64,145,108,0.15), inset 0 1px 0 rgba(255,255,255,0.05);
+}
+
+/* Placeholder asset styling */
+.asset-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  font-family: monospace;
+  font-size: 0.75rem;
+  opacity: 0.6;
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: var(--o7-dark);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--o7-green-mid);
+  border-radius: 3px;
+}
+
+/* Pulse animation for coming soon */
+@keyframes gentle-pulse {
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 1; }
+}
+.animate-gentle-pulse {
+  animation: gentle-pulse 3s ease-in-out infinite;
 }

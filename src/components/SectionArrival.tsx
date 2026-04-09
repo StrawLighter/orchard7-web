@@ -1,65 +1,83 @@
 "use client";
 
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useCallback } from "react";
 
 export default function SectionArrival() {
   const [scrollY, setScrollY] = useState(0);
   const [loaded, setLoaded] = useState(false);
   const [playing, setPlaying] = useState(false);
+  const [userMuted, setUserMuted] = useState(false); // true only if user explicitly clicked mute
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
   useEffect(() => {
     setLoaded(true);
-    const audio = new Audio("/assets/o7-theme.mp3");
+
+    // Strategy: start audio MUTED (always allowed by browsers), then unmute on scroll.
+    // Browsers block .play() on non-user-gesture events, but they do NOT block
+    // changing .muted on an already-playing element.
+    const audio = document.createElement("audio");
+    audio.src = "/assets/o7-theme.mp3";
     audio.loop = true;
     audio.volume = 0.4;
+    audio.muted = true;       // Muted autoplay is ALWAYS allowed
+    audio.setAttribute("playsinline", "true");
     audioRef.current = audio;
 
-    // Autoplay: try immediately, fallback to first interaction
-    let started = false;
-    const tryPlay = () => {
-      if (started) return;
-      audio.play().then(() => { started = true; setPlaying(true); }).catch(() => {});
+    // Start playing immediately (muted — browsers always allow this)
+    audio.play().catch(() => {});
+
+    // Unmute on ANY interaction (scroll wheel, touch, click, key)
+    let unmuted = false;
+    const unmute = () => {
+      if (unmuted) return;
+      audio.muted = false;  // This does NOT require user activation — audio is already playing
+      unmuted = true;
+      setPlaying(true);
+      cleanup();
     };
-    tryPlay();
-    // Also try on any user interaction (click, scroll, touch, keydown)
-    const onInteract = () => {
-      tryPlay();
-      if (started) {
-        document.removeEventListener("click", onInteract);
-        document.removeEventListener("wheel", onInteract);
-        document.removeEventListener("touchstart", onInteract);
-        document.removeEventListener("touchmove", onInteract);
-        document.removeEventListener("keydown", onInteract);
-        document.removeEventListener("pointerdown", onInteract);
-      }
+    const cleanup = () => {
+      document.removeEventListener("wheel", unmute);
+      document.removeEventListener("scroll", unmute);
+      document.removeEventListener("touchstart", unmute);
+      document.removeEventListener("touchmove", unmute);
+      document.removeEventListener("click", unmute);
+      document.removeEventListener("keydown", unmute);
+      document.removeEventListener("pointerdown", unmute);
     };
-    document.addEventListener("click", onInteract);
-    document.addEventListener("wheel", onInteract);       // wheel = user gesture (scroll is not)
-    document.addEventListener("touchstart", onInteract);
-    document.addEventListener("touchmove", onInteract);   // swipe scroll on mobile
-    document.addEventListener("keydown", onInteract);
-    document.addEventListener("pointerdown", onInteract); // covers mouse + touch + pen
+    document.addEventListener("wheel", unmute, { passive: true });
+    document.addEventListener("scroll", unmute, { passive: true });
+    document.addEventListener("touchstart", unmute, { passive: true });
+    document.addEventListener("touchmove", unmute, { passive: true });
+    document.addEventListener("click", unmute);
+    document.addEventListener("keydown", unmute);
+    document.addEventListener("pointerdown", unmute);
 
     const onScroll = () => setScrollY(window.scrollY);
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => {
       window.removeEventListener("scroll", onScroll);
+      cleanup();
       audio.pause();
+      audio.remove();
     };
   }, []);
 
-  const toggleMusic = () => {
-    if (!audioRef.current) return;
+  const toggleMusic = useCallback(() => {
+    const audio = audioRef.current;
+    if (!audio) return;
     if (playing) {
-      audioRef.current.pause();
+      audio.pause();
+      setPlaying(false);
+      setUserMuted(true);
     } else {
-      audioRef.current.play();
+      audio.muted = false;
+      audio.play().catch(() => {});
+      setPlaying(true);
+      setUserMuted(false);
     }
-    setPlaying(!playing);
-  };
+  }, [playing]);
 
-  // Subtle zoom parallax: starts at scale 1.0, grows to 1.08 as you scroll
+  // Subtle zoom parallax
   const scale = 1 + scrollY * 0.00008;
   const translateY = scrollY * 0.3;
 
@@ -92,12 +110,10 @@ export default function SectionArrival() {
       {/* Dark gradient overlays for text contrast */}
       <div className="absolute inset-0 z-[1] bg-gradient-to-b from-black/50 via-transparent to-transparent" />
       <div className="absolute inset-0 z-[1] bg-gradient-to-t from-o7-dark via-transparent to-transparent" />
-      {/* Subtle radial vignette */}
       <div className="absolute inset-0 z-[1]" style={{ background: "radial-gradient(ellipse at center, transparent 40%, rgba(0,0,0,0.4) 100%)" }} />
 
       {/* Content overlay */}
       <div className={`absolute inset-0 flex flex-col items-center justify-center z-10 transition-all duration-1000 ${loaded ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"}`}>
-        {/* Logo */}
         <div className="w-28 h-28 sm:w-36 sm:h-36 mb-6">
           <img
             src="/assets/o7-logo.png"
@@ -105,7 +121,6 @@ export default function SectionArrival() {
             className="w-full h-full object-contain drop-shadow-[0_0_20px_rgba(181,133,27,0.3)]"
             onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }}
           />
-          {/* Fallback logo */}
           <div
             className="w-full h-full rounded-full border-2 border-o7-gold/40 flex items-center justify-center backdrop-blur-sm bg-o7-dark/30"
             style={{ marginTop: "-100%" }}

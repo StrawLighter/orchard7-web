@@ -1,0 +1,57 @@
+{
+  "character": {
+    "id": "e0fa98d1-e71e-4075-bf38-264216d9641f",
+    "name": "7 year old child adventurer, small brave girl, solarpunk fantasy world, oversized leather sword on back almost too big for her, hand-me-down leather armor wrapped with trained vines that are slightly too loose, long braided hair with small wildflowers and vine threads woven into the braids, determined expression on a young face, seed pouch belt, worn bark-and-leather boots, short tattered plant-fiber cloak dragging slightly on the ground, small hands gripping sword handle made of living root, warm brown and forest green palette, hand-painted storybook illustration style, full body character design, strong readable silhouette, the feeling of a child on a big adventure, clean background max canvas 104x104",
+    "prompt": "7 year old child adventurer, small brave girl, solarpunk fantasy world, oversized leather sword on back almost too big for her, hand-me-down leather armor wrapped with trained vines that are slightly too loose, long braided hair with small wildflowers and vine threads woven into the braids, determined expression on a young face, seed pouch belt, worn bark-and-leather boots, short tattered plant-fiber cloak dragging slightly on the ground, small hands gripping sword handle made of living root, warm brown and forest green palette, hand-painted storybook illustration style, full body character design, strong readable silhouette, the feeling of a child on a big adventure, clean background max canvas 104x104",
+    "size": {
+      "width": 108,
+      "height": 108
+    },
+    "template_id": "mannequin",
+    "directions": 8,
+    "view": "low top-down",
+    "created_at": "2026-04-08T16:07:54.188791+00:00"
+  },
+  "frames": {
+    "rotations": {
+      "south": "rotations/south.png",
+      "south-east": "rotations/south-east.png",
+      "east": "rotations/east.png",
+      "north-east": "rotations/north-east.png",
+      "north": "rotations/north.png",
+      "north-west": "rotations/north-west.png",
+      "west": "rotations/west.png",
+      "south-west": "rotations/south-west.png"
+    },
+    "animations": {
+      "Walking-60ff490c": {
+        "north": [
+          "animations/Walking-60ff490c/north/frame_000.png",
+          "animations/Walking-60ff490c/north/frame_001.png",
+          "animations/Walking-60ff490c/north/frame_002.png",
+          "animations/Walking-60ff490c/north/frame_003.png"
+        ],
+        "east": [
+          "animations/Walking-60ff490c/east/frame_000.png",
+          "animations/Walking-60ff490c/east/frame_001.png",
+          "animations/Walking-60ff490c/east/frame_002.png",
+          "animations/Walking-60ff490c/east/frame_003.png"
+        ],
+        "south": [
+          "animations/Walking-60ff490c/south/frame_000.png",
+          "animations/Walking-60ff490c/south/frame_001.png",
+          "animations/Walking-60ff490c/south/frame_002.png",
+          "animations/Walking-60ff490c/south/frame_003.png"
+        ],
+        "west": [
+          "animations/Walking-60ff490c/west/frame_000.png",
+          "animations/Walking-60ff490c/west/frame_001.png",
+          "animations/Walking-60ff490c/west/frame_002.png",
+          "animations/Walking-60ff490c/west/frame_003.png"
+        ]
+      }
+    }
+  },
+  "export_version": "2.0",
+  "export_date": "2026-04-09T17:52:18.619233"
+}

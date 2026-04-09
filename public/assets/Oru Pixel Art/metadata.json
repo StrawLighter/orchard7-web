@@ -1,0 +1,30 @@
+{
+  "character": {
+    "id": "77b304aa-63b9-4fff-b8db-955d8cd6e637",
+    "name": "small round stone golem creature sitting peacefully, chubby body made of smooth grey-white stone, tiny stubby arms holding small white flowers, flat gentle face with simple dot eyes and a content subtle smile, moss and small white wildflowers growing naturally from the top of its head like a living garden, a small glowing blue crystal emerging from the crown of its head like a natural formation, short stumpy legs, sitting in a mossy forest floor surrounded by fallen leaves, the feeling of something ancient and gentle that has been sitting in this spot for centuries growing flowers, round and huggable but made of solid rock, a living garden statue that chose to be alive, solarpunk fantasy creature, hand-painted storybook style, warm natural lighting, clean background 104x104 max canvas",
+    "prompt": "small round stone golem creature sitting peacefully, chubby body made of smooth grey-white stone, tiny stubby arms holding small white flowers, flat gentle face with simple dot eyes and a content subtle smile, moss and small white wildflowers growing naturally from the top of its head like a living garden, a small glowing blue crystal emerging from the crown of its head like a natural formation, short stumpy legs, sitting in a mossy forest floor surrounded by fallen leaves, the feeling of something ancient and gentle that has been sitting in this spot for centuries growing flowers, round and huggable but made of solid rock, a living garden statue that chose to be alive, solarpunk fantasy creature, hand-painted storybook style, warm natural lighting, clean background 104x104 max canvas",
+    "size": {
+      "width": 120,
+      "height": 120
+    },
+    "template_id": "mannequin",
+    "directions": 8,
+    "view": "low top-down",
+    "created_at": "2026-04-08T16:03:02.520328+00:00"
+  },
+  "frames": {
+    "rotations": {
+      "south": "rotations/south.png",
+      "south-east": "rotations/south-east.png",
+      "east": "rotations/east.png",
+      "north-east": "rotations/north-east.png",
+      "north": "rotations/north.png",
+      "north-west": "rotations/north-west.png",
+      "west": "rotations/west.png",
+      "south-west": "rotations/south-west.png"
+    },
+    "animations": {}
+  },
+  "export_version": "2.0",
+  "export_date": "2026-04-09T17:52:12.322008"
+}

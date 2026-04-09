@@ -5,79 +5,27 @@ import { useEffect, useState, useRef, useCallback } from "react";
 export default function SectionArrival() {
   const [scrollY, setScrollY] = useState(0);
   const [loaded, setLoaded] = useState(false);
-  const [playing, setPlaying] = useState(false);
-  const [userMuted, setUserMuted] = useState(false); // true only if user explicitly clicked mute
-  const audioRef = useRef<HTMLAudioElement | null>(null);
+  const [playing, setPlaying] = useState(true); // Starts true because splash already started music
 
   useEffect(() => {
     setLoaded(true);
-
-    // Strategy: start audio MUTED (always allowed by browsers), then unmute on scroll.
-    // Browsers block .play() on non-user-gesture events, but they do NOT block
-    // changing .muted on an already-playing element.
-    const audio = document.createElement("audio");
-    audio.src = "/assets/o7-theme.mp3";
-    audio.loop = true;
-    audio.volume = 0.4;
-    audio.muted = true;       // Muted autoplay is ALWAYS allowed
-    audio.setAttribute("playsinline", "true");
-    audioRef.current = audio;
-
-    // Start playing immediately (muted — browsers always allow this)
-    audio.play().catch(() => {});
-
-    // Unmute on ANY interaction (scroll wheel, touch, click, key)
-    let unmuted = false;
-    const unmute = () => {
-      if (unmuted) return;
-      audio.muted = false;  // This does NOT require user activation — audio is already playing
-      unmuted = true;
-      setPlaying(true);
-      cleanup();
-    };
-    const cleanup = () => {
-      document.removeEventListener("wheel", unmute);
-      document.removeEventListener("scroll", unmute);
-      document.removeEventListener("touchstart", unmute);
-      document.removeEventListener("touchmove", unmute);
-      document.removeEventListener("click", unmute);
-      document.removeEventListener("keydown", unmute);
-      document.removeEventListener("pointerdown", unmute);
-    };
-    document.addEventListener("wheel", unmute, { passive: true });
-    document.addEventListener("scroll", unmute, { passive: true });
-    document.addEventListener("touchstart", unmute, { passive: true });
-    document.addEventListener("touchmove", unmute, { passive: true });
-    document.addEventListener("click", unmute);
-    document.addEventListener("keydown", unmute);
-    document.addEventListener("pointerdown", unmute);
-
     const onScroll = () => setScrollY(window.scrollY);
     window.addEventListener("scroll", onScroll, { passive: true });
-    return () => {
-      window.removeEventListener("scroll", onScroll);
-      cleanup();
-      audio.pause();
-      audio.remove();
-    };
+    return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
   const toggleMusic = useCallback(() => {
-    const audio = audioRef.current;
+    const audio = (window as any).__o7Audio as HTMLAudioElement | undefined;
     if (!audio) return;
     if (playing) {
       audio.pause();
       setPlaying(false);
-      setUserMuted(true);
     } else {
-      audio.muted = false;
       audio.play().catch(() => {});
       setPlaying(true);
-      setUserMuted(false);
     }
   }, [playing]);
 
-  // Subtle zoom parallax
   const scale = 1 + scrollY * 0.00008;
   const translateY = scrollY * 0.3;
 
@@ -97,13 +45,12 @@ export default function SectionArrival() {
           className="absolute inset-0 w-full h-full object-cover"
           onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }}
         />
-        {/* Placeholder fallback */}
         <div
           className="absolute inset-0 asset-placeholder"
           style={{ background: "linear-gradient(180deg, #1a1a3e 0%, #1B4332 40%, #2D6A4F 70%, #0d2818 100%)" }}
         >
           <span className="text-white/40">arrival-panorama.png</span>
-          <span className="text-white/30 text-[10px]">1920x1080 — Full hero panorama</span>
+          <span className="text-white/30 text-[10px]">1920x1080</span>
         </div>
       </div>
 

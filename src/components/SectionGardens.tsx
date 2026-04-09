@@ -279,17 +279,29 @@ export default function SectionGardens() {
         )}
       </div>
 
-      {/* Oru sprite */}
-      <div className="absolute right-8 bottom-20 w-24 h-24 hidden lg:block">
-        <img src="/assets/oru-idle.png" alt="Oru" className="w-full h-full object-contain" style={{ imageRendering: "pixelated" }}
-          onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }} />
-      </div>
-      {/* Fountain sprite */}
-      <div className="absolute left-8 bottom-20 w-32 h-32 hidden lg:block">
-        <img src="/assets/fountain-idle.png" alt="Fountain" className="w-full h-full object-contain" style={{ imageRendering: "pixelated" }}
-          onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }} />
+      {/* Oru animated sprite */}
+      <div className="absolute right-8 bottom-20 hidden lg:block" style={{ filter: "drop-shadow(0 0 8px rgba(64,145,108,0.3))" }}>
+        <OruBounce />
       </div>
     </section>
+  );
+}
+
+function OruBounce() {
+  const [frame, setFrame] = useState(0);
+  useEffect(() => {
+    const iv = setInterval(() => setFrame((f) => (f + 1) % 4), 400);
+    return () => clearInterval(iv);
+  }, []);
+  const y = [0, -4, 0, -2][frame];
+  return (
+    <img
+      src="/assets/oru-idle.png"
+      alt="Oru"
+      width={80}
+      height={80}
+      style={{ imageRendering: "pixelated", transform: `translateY(${y}px)`, transition: "transform 0.2s" }}
+    />
   );
 }
 

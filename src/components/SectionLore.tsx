@@ -1,11 +1,17 @@
 "use client";
 
+import AnimatedSprite from "./AnimatedSprite";
+
 export default function SectionLore() {
-  const concepts = [
-    { name: "Milo", file: "concept-milo.png", color: "#B5851B", desc: "The Wanderer" },
-    { name: "Oru", file: "concept-oru.png", color: "#40916C", desc: "The Garden Spirit" },
+  const miloFrames = [0, 1, 2, 3].map((i) => `/assets/Milo Pixel Art/animations/Walking-15d358c2/south/frame_00${i}.png`);
+  const concepts: Array<{
+    name: string; file?: string; color: string; desc: string;
+    animated?: string[]; isPixel?: boolean; placeholder?: string;
+  }> = [
+    { name: "Milo", color: "#B5851B", desc: "The Wanderer", animated: miloFrames },
+    { name: "Oru", file: "concept-oru.png", color: "#40916C", desc: "The Garden Spirit", isPixel: true },
     { name: "Thornhallow", file: "concept-thornhallow.png", color: "#2D6A4F", desc: "The Valley Town" },
-    { name: "The Constructs", file: "concept-constructs.png", color: "#1B4332", desc: "Coming Soon" },
+    { name: "The Constructs", color: "#1B4332", desc: "Coming Soon", placeholder: "concept-constructs.png" },
   ];
 
   return (
@@ -37,16 +43,24 @@ export default function SectionLore() {
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
           {concepts.map((c) => (
             <div key={c.name} className="space-y-2 group">
-              <div className="relative aspect-square rounded-lg overflow-hidden border-2 border-o7-green-mid/30 group-hover:border-o7-gold/40 transition-colors duration-300">
-                <img src={`/assets/${c.file}`} alt={c.name}
-                  className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                  style={{ imageRendering: c.file.includes("concept-milo") || c.file.includes("concept-oru") ? "pixelated" : "auto" }}
-                  onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }} />
-                <div className="absolute inset-0 asset-placeholder" style={{ background: c.color }}>
-                  <span className="text-white/40 text-[10px]">{c.file}</span>
-                  <span className="text-white/30 text-[9px]">400x400</span>
-                </div>
-                {/* Hover overlay */}
+              <div className="relative aspect-square rounded-lg overflow-hidden border-2 border-o7-green-mid/30 group-hover:border-o7-gold/40 transition-colors duration-300 flex items-center justify-center" style={{ background: c.color }}>
+                {c.animated ? (
+                  <AnimatedSprite frames={c.animated} fps={5} size={120} className="group-hover:scale-110 transition-transform duration-500" />
+                ) : c.file ? (
+                  <>
+                    <img src={`/assets/${c.file}`} alt={c.name}
+                      className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                      style={{ imageRendering: c.isPixel ? "pixelated" : "auto" }}
+                      onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }} />
+                    <div className="absolute inset-0 asset-placeholder">
+                      <span className="text-white/40 text-[10px]">{c.file}</span>
+                    </div>
+                  </>
+                ) : (
+                  <div className="asset-placeholder">
+                    <span className="text-white/40 text-[10px]">{c.placeholder}</span>
+                  </div>
+                )}
                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
               </div>
               <div className="text-center">

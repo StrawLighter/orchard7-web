@@ -13,66 +13,83 @@ export default function SectionArrival() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
+  // Subtle zoom parallax: starts at scale 1.0, grows to 1.08 as you scroll
+  const scale = 1 + scrollY * 0.00008;
+  const translateY = scrollY * 0.3;
+
   return (
     <section id="arrival" className="relative h-screen w-full overflow-hidden">
-      {/* 4-layer parallax */}
-      <ParallaxLayer src="/assets/arrival-sky.png" speed={0.1} scrollY={scrollY}
-        fallbackColor="#1a1a3e" label="arrival-sky.png" dims="1920x1080" />
-      <ParallaxLayer src="/assets/arrival-mountains.png" speed={0.25} scrollY={scrollY}
-        fallbackColor="#1B4332" label="arrival-mountains.png" dims="1920x1080" />
-      <ParallaxLayer src="/assets/arrival-valley.png" speed={0.45} scrollY={scrollY}
-        fallbackColor="#2D6A4F" label="arrival-valley.png" dims="1920x1080" />
-      <ParallaxLayer src="/assets/arrival-foreground.png" speed={0.65} scrollY={scrollY}
-        fallbackColor="#0d2818" label="arrival-foreground.png" dims="1920x1080" />
+      {/* Single panorama background with subtle parallax zoom */}
+      <div
+        className="absolute inset-0 transition-none"
+        style={{
+          transform: `scale(${scale}) translateY(${translateY}px)`,
+          transformOrigin: "center center",
+        }}
+      >
+        <img
+          src="/assets/arrival-panorama.png"
+          alt="The Rootledge — Milo overlooks the valley"
+          className="absolute inset-0 w-full h-full object-cover"
+          onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }}
+        />
+        {/* Placeholder fallback */}
+        <div
+          className="absolute inset-0 asset-placeholder"
+          style={{ background: "linear-gradient(180deg, #1a1a3e 0%, #1B4332 40%, #2D6A4F 70%, #0d2818 100%)" }}
+        >
+          <span className="text-white/40">arrival-panorama.png</span>
+          <span className="text-white/30 text-[10px]">1920x1080 — Full hero panorama</span>
+        </div>
+      </div>
+
+      {/* Dark gradient overlays for text contrast */}
+      <div className="absolute inset-0 z-[1] bg-gradient-to-b from-black/50 via-transparent to-transparent" />
+      <div className="absolute inset-0 z-[1] bg-gradient-to-t from-o7-dark via-transparent to-transparent" />
+      {/* Subtle radial vignette */}
+      <div className="absolute inset-0 z-[1]" style={{ background: "radial-gradient(ellipse at center, transparent 40%, rgba(0,0,0,0.4) 100%)" }} />
 
       {/* Content overlay */}
-      <div className={`absolute inset-0 flex flex-col items-center justify-center z-10 transition-all duration-1000 ${loaded ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"}`}>
+      <div className={`absolute inset-0 flex flex-col items-center justify-center z-10 transition-all duration-1000 ${loaded ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"}`}>
         {/* Logo */}
-        <div className="w-32 h-32 mb-6">
-          <img src="/assets/o7-logo.png" alt="O7" className="w-full h-full object-contain"
-            onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }} />
-          <div className="w-full h-full rounded-full border-2 border-o7-gold/40 flex items-center justify-center"
-            style={{ marginTop: "-100%" }}>
-            <span className="font-pixel text-o7-gold text-2xl">O7</span>
+        <div className="w-28 h-28 sm:w-36 sm:h-36 mb-6">
+          <img
+            src="/assets/o7-logo.png"
+            alt="O7"
+            className="w-full h-full object-contain drop-shadow-[0_0_20px_rgba(181,133,27,0.3)]"
+            onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }}
+          />
+          {/* Fallback logo */}
+          <div
+            className="w-full h-full rounded-full border-2 border-o7-gold/40 flex items-center justify-center backdrop-blur-sm bg-o7-dark/30"
+            style={{ marginTop: "-100%" }}
+          >
+            <span className="font-pixel text-o7-gold text-2xl drop-shadow-[0_0_10px_rgba(181,133,27,0.5)]">O7</span>
           </div>
         </div>
 
-        <h1 className="font-pixel text-o7-cream text-sm sm:text-lg md:text-xl text-center leading-relaxed mb-4">
+        <h1 className="font-pixel text-o7-cream text-sm sm:text-lg md:text-xl text-center leading-relaxed mb-3 drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)]">
           ORCHARD 7
         </h1>
-        <p className="text-o7-cream/70 text-sm sm:text-base italic text-center max-w-md mb-8 font-body">
+        <p className="text-o7-cream/80 text-sm sm:text-base italic text-center max-w-md mb-8 font-body drop-shadow-[0_1px_4px_rgba(0,0,0,0.9)]">
           &ldquo;The roots remember what the world forgot.&rdquo;
         </p>
 
-        <a href="#gardens"
-          className="rpg-panel px-8 py-3 font-pixel text-xs text-o7-gold hover:text-o7-cream transition cursor-pointer">
+        <a
+          href="#gardens"
+          className="rpg-btn px-10 py-3 font-pixel text-xs text-o7-gold hover:text-o7-cream transition-all duration-200 hover:scale-105 active:translate-y-0.5"
+        >
           Enter the Gardens
         </a>
       </div>
 
       {/* Music toggle (UI only) */}
-      <button className="absolute bottom-6 right-6 z-20 w-10 h-10 rounded-full border border-o7-teal/30 bg-o7-dark/60 flex items-center justify-center text-o7-teal/50 hover:text-o7-teal transition text-sm"
-        title="Music (coming soon)">
+      <button
+        className="absolute bottom-6 right-6 z-20 w-10 h-10 rounded-full border border-o7-teal/30 bg-o7-dark/60 backdrop-blur-sm flex items-center justify-center text-o7-teal/50 hover:text-o7-teal transition text-sm"
+        title="Music (coming soon)"
+      >
         &#9835;
       </button>
-
-      {/* Gradient fade to next section */}
-      <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-o7-dark to-transparent z-10" />
     </section>
-  );
-}
-
-function ParallaxLayer({ src, speed, scrollY, fallbackColor, label, dims }: {
-  src: string; speed: number; scrollY: number; fallbackColor: string; label: string; dims: string;
-}) {
-  return (
-    <div className="absolute inset-0" style={{ transform: `translateY(${scrollY * speed}px)` }}>
-      <img src={src} alt="" className="absolute inset-0 w-full h-full object-cover"
-        onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }} />
-      <div className="absolute inset-0 asset-placeholder" style={{ background: fallbackColor }}>
-        <span className="text-white/40">{label}</span>
-        <span className="text-white/30 text-[10px]">{dims}</span>
-      </div>
-    </div>
   );
 }

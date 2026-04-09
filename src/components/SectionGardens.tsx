@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { useWallet, useConnection } from "@solana/wallet-adapter-react";
+import { useWalletModal } from "@solana/wallet-adapter-react-ui";
 import { getAssociatedTokenAddressSync, getAccount } from "@solana/spl-token";
 import { LAMPORTS_PER_SOL, PublicKey } from "@solana/web3.js";
 import BN from "bn.js";
@@ -20,6 +21,7 @@ interface BluData { totalEarned: number; totalHarvested: number; batchCount: num
 export default function SectionGardens() {
   const { publicKey } = useWallet();
   const { connection } = useConnection();
+  const { setVisible } = useWalletModal();
   const programs = usePrograms();
 
   const [gardenData, setGardenData] = useState<GardenData | null>(null);
@@ -90,10 +92,13 @@ export default function SectionGardens() {
         </div>
 
         {!publicKey ? (
-          <div className="rpg-panel rpg-decorated rounded-lg p-10 text-center">
+          <button
+            onClick={() => setVisible(true)}
+            className="rpg-btn rpg-decorated rounded-lg p-10 text-center w-full cursor-pointer hover:scale-[1.01] transition-transform"
+          >
             <p className="font-pixel text-o7-gold text-xs mb-2">Connect Wallet</p>
             <p className="text-o7-cream/50 font-body text-sm">Link your wallet to enter the Gardens</p>
-          </div>
+          </button>
         ) : !gardenData ? (
           <div className="rpg-panel rounded-lg p-10 text-center">
             <p className="text-o7-cream/70 font-body animate-pulse">Loading Garden state...</p>

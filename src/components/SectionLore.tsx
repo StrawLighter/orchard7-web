@@ -13,7 +13,7 @@ export default function SectionLore() {
     { name: "Milo", color: "#B5851B", desc: "The Wanderer", animated: miloSpin },
     { name: "Oru", color: "#40916C", desc: "The Garden Spirit", animated: oruSpin },
     { name: "Thornhallow", file: "concept-thornhallow.png", color: "#2D6A4F", desc: "The Valley Town" },
-    { name: "The Constructs", color: "#1B4332", desc: "Coming Soon", placeholder: "concept-constructs.png" },
+    { name: "The Constructs", color: "#1B4332", desc: "Ancient Machines", animated: rotations.map((r) => `/assets/evil-construct/rotations/${r}.png`) },
   ];
 
   return (

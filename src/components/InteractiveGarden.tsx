@@ -32,13 +32,14 @@ interface BluData {
 
 // ── Hotspot definitions (percentage-based for scaling) ───────────
 // Hotspots positioned exactly on top of the wooden signs in the image
+// Coordinates measured from pixel positions in 1376x768 image
 const HOTSPOTS = [
-  { id: "groves", label: "Apple Orchard", sub: "Stake SOL", x: 76, y: 47, w: 9, h: 6, glowColor: "rgba(45,106,79,0.5)" },
-  { id: "harvest", label: "Harvest Tree", sub: "Claim Rewards", x: 45, y: 42, w: 9, h: 6, glowColor: "rgba(181,133,27,0.5)" },
-  { id: "fountain", label: "The Fountain", sub: "Yield Rewards", x: 41, y: 62, w: 9, h: 5, glowColor: "rgba(64,145,108,0.5)" },
-  { id: "bank", label: "Village Bank", sub: "Emergency Exit", x: 8, y: 28, w: 9, h: 6, glowColor: "rgba(181,133,27,0.4)" },
-  { id: "cellar", label: "The Cellar", sub: "BluApple Vault", x: 8, y: 69, w: 9, h: 6, glowColor: "rgba(100,149,237,0.4)" },
-  { id: "gate", label: "Exit Gate", sub: "Unstake SOL", x: 42, y: 88, w: 8, h: 5, glowColor: "rgba(200,200,200,0.3)" },
+  { id: "groves", label: "Apple Orchard", sub: "Stake SOL", x: 74.5, y: 71.0, w: 8.0, h: 5.2, glowColor: "rgba(45,106,79,0.5)" },
+  { id: "harvest", label: "Harvest Tree", sub: "Claim Rewards", x: 51.2, y: 55.3, w: 7.3, h: 5.2, glowColor: "rgba(181,133,27,0.5)" },
+  { id: "fountain", label: "The Fountain", sub: "Yield Rewards", x: 40.0, y: 64.1, w: 5.8, h: 4.6, glowColor: "rgba(64,145,108,0.5)" },
+  { id: "bank", label: "Village Bank", sub: "Emergency Exit", x: 14.2, y: 38.4, w: 5.8, h: 5.2, glowColor: "rgba(181,133,27,0.4)" },
+  { id: "cellar", label: "The Cellar", sub: "BluApple Vault", x: 19.3, y: 62.2, w: 7.3, h: 4.6, glowColor: "rgba(100,149,237,0.4)" },
+  { id: "gate", label: "Exit Gate", sub: "Unstake SOL", x: 42, y: 92, w: 8, h: 5, glowColor: "rgba(200,200,200,0.3)" },
 ];
 
 export default function InteractiveGarden() {

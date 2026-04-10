@@ -4,7 +4,7 @@ import orchardIdl from "./orchard.json";
 
 // ── Program ID (devnet deployed) ───────────────────────────────────────
 export const ORCHARD_ID = new PublicKey(
-  "DvVEq5v26rdDsaehVPL7cjNx54wpbE9f7m11UuitZeGQ"
+  "5VJSKdE6qkhZ6ZXDd5J7EvFi9nZzRA1zsWCy1aF2hnzx"
 );
 
 // ── Program Constructor ────────────────────────────────────────────────

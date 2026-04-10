@@ -177,58 +177,28 @@ export default function InteractiveGarden() {
           <img src="/assets/garden-scene.png" alt="The Gardens" className="absolute inset-0 w-full h-full object-cover" style={{ imageRendering: "auto" }} />
 
           {/* ── CSS Animations Layer ── */}
-          {/* Fountain — multi-layer animation */}
-          {/* Base teal glow (large, slow pulse) */}
-          <div style={{ position: "absolute", left: "44%", top: "56%", width: "12%", height: "14%", transform: "translate(-50%, -50%)", pointerEvents: "none" }}>
-            <div style={{ position: "absolute", inset: 0, borderRadius: "50%", background: "radial-gradient(circle, rgba(64,145,108,0.35) 0%, rgba(64,145,108,0.1) 40%, transparent 70%)", animation: "fountain-base 3s ease-in-out infinite" }} />
-          </div>
-          {/* Inner bright core (smaller, faster pulse) */}
-          <div style={{ position: "absolute", left: "44%", top: "57%", width: "5%", height: "6%", transform: "translate(-50%, -50%)", pointerEvents: "none" }}>
-            <div style={{ position: "absolute", inset: 0, borderRadius: "50%", background: "radial-gradient(circle, rgba(100,220,180,0.5) 0%, rgba(64,145,108,0.2) 50%, transparent 80%)", animation: "fountain-core 1.8s ease-in-out infinite" }} />
-          </div>
-          {/* Water spout particles — rising from center */}
-          {[0, 1, 2, 3, 4, 5, 6, 7].map(i => (
-            <div key={`spout-${i}`} style={{
-              position: "absolute", left: `${42 + (i % 4) * 1.5}%`, top: "54%",
-              width: 3, height: 3, borderRadius: "50%",
-              background: i < 4 ? "rgba(100,220,180,0.8)" : "rgba(64,145,108,0.6)",
-              animation: `fountain-spout ${1.5 + (i % 3) * 0.4}s ease-out infinite`,
-              animationDelay: `${i * 0.25}s`, pointerEvents: "none",
-            }} />
-          ))}
-          {/* Mist particles — drifting outward from fountain */}
-          {[0, 1, 2, 3, 4, 5].map(i => (
-            <div key={`mist-${i}`} style={{
-              position: "absolute", left: `${41 + i * 1.2}%`, top: "58%",
-              width: 6, height: 6, borderRadius: "50%",
-              background: "rgba(64,145,108,0.3)",
-              animation: `fountain-mist ${4 + i * 0.7}s ease-in-out infinite`,
-              animationDelay: `${i * 0.6}s`, pointerEvents: "none",
-            }} />
-          ))}
-          {/* Sparkle dots — twinkling around the fountain */}
-          {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9].map(i => {
-            const angle = (i / 10) * Math.PI * 2;
-            const radius = 3 + (i % 3) * 1.5;
+          {/* Fountain — pixel droplet style */}
+          {/* Tiny teal droplets rising from spout positions */}
+          {[0, 1, 2, 3, 4, 5, 6, 7].map(i => {
+            // Spread across 3 spout points on the fountain
+            const spoutX = 43 + (i % 3) * 1.2;
             return (
-              <div key={`sparkle-${i}`} style={{
-                position: "absolute",
-                left: `${44 + Math.cos(angle) * radius}%`,
-                top: `${57 + Math.sin(angle) * radius}%`,
-                width: 2, height: 2, borderRadius: "50%",
-                background: "rgba(180,255,220,0.8)",
-                animation: `fountain-sparkle ${2 + (i % 4) * 0.5}s ease-in-out infinite`,
-                animationDelay: `${i * 0.3}s`, pointerEvents: "none",
+              <div key={`drop-${i}`} style={{
+                position: "absolute", left: `${spoutX}%`, top: "55%",
+                width: i < 4 ? 3 : 2, height: i < 4 ? 3 : 2, borderRadius: "50%",
+                background: i < 3 ? "rgba(100,230,190,0.9)" : "rgba(64,185,140,0.7)",
+                animation: `droplet-rise ${1.8 + (i % 3) * 0.3}s ease-out infinite`,
+                animationDelay: `${i * 0.5}s`, pointerEvents: "none",
               }} />
             );
           })}
-          {/* Water ring ripples */}
+          {/* Subtle water surface ripples (thin rings, not glow blobs) */}
           {[0, 1, 2].map(i => (
             <div key={`ripple-${i}`} style={{
               position: "absolute", left: "44%", top: "59%",
-              width: "4%", height: "2.5%", transform: "translate(-50%, -50%)",
-              border: "1px solid rgba(100,220,180,0.3)", borderRadius: "50%",
-              animation: `fountain-ripple ${3}s ease-out infinite`,
+              width: "3%", height: "1.5%", transform: "translate(-50%, -50%)",
+              border: "1px solid rgba(100,220,180,0.25)", borderRadius: "50%",
+              animation: `fountain-ripple 3s ease-out infinite`,
               animationDelay: `${i * 1}s`, pointerEvents: "none",
             }} />
           ))}
@@ -518,31 +488,14 @@ export default function InteractiveGarden() {
 
       {/* ── Keyframe Animations ── */}
       <style jsx>{`
-        @keyframes fountain-base {
-          0%, 100% { opacity: 0.5; transform: scale(1); }
-          50% { opacity: 0.9; transform: scale(1.08); }
-        }
-        @keyframes fountain-core {
-          0%, 100% { opacity: 0.4; transform: scale(0.9); }
-          50% { opacity: 0.8; transform: scale(1.15); }
-        }
-        @keyframes fountain-spout {
-          0% { transform: translateY(0) scale(1); opacity: 0.8; }
-          40% { opacity: 0.6; }
-          100% { transform: translateY(-30px) scale(0.2); opacity: 0; }
-        }
-        @keyframes fountain-mist {
-          0% { transform: translate(0, 0) scale(1); opacity: 0.3; }
-          50% { transform: translate(8px, -6px) scale(1.8); opacity: 0.15; }
-          100% { transform: translate(15px, -3px) scale(2.5); opacity: 0; }
-        }
-        @keyframes fountain-sparkle {
-          0%, 100% { opacity: 0; transform: scale(0.5); }
-          50% { opacity: 0.9; transform: scale(1.5); }
+        @keyframes droplet-rise {
+          0% { transform: translateY(0); opacity: 0.9; }
+          60% { opacity: 0.5; }
+          100% { transform: translateY(-25px); opacity: 0; }
         }
         @keyframes fountain-ripple {
-          0% { transform: translate(-50%, -50%) scale(0.5); opacity: 0.5; }
-          100% { transform: translate(-50%, -50%) scale(3); opacity: 0; }
+          0% { transform: translate(-50%, -50%) scale(0.5); opacity: 0.4; }
+          100% { transform: translate(-50%, -50%) scale(2.5); opacity: 0; }
         }
         @keyframes lantern-flicker {
           0%, 100% { opacity: 0.4; transform: scale(1); }

@@ -41,12 +41,35 @@ export const getFountainPulsePda = (pulseId: BN) => pda([Buffer.from("fountain-p
 export const getFountainClaimTrackerPda = (user: PublicKey) => pda([Buffer.from("fountain-claim"), user.toBuffer()]);
 
 // ── Lock Tiers ─────────────────────────────────────────────────────────
+// v0.5: Single multiplier per lock tier (applies to total reward before split)
 export const LOCK_TIERS = [
-  { name: "No Lock", days: 0, grienMult: "1.00x", bluMult: "1.00x" },
-  { name: "30 Days", days: 30, grienMult: "1.15x", bluMult: "1.25x" },
-  { name: "90 Days", days: 90, grienMult: "1.35x", bluMult: "1.75x" },
-  { name: "180 Days", days: 180, grienMult: "1.75x", bluMult: "2.50x" },
+  { name: "No Lock", days: 0, mult: "1.00x", multBps: 10000 },
+  { name: "30 Days", days: 30, mult: "1.25x", multBps: 12500 },
+  { name: "90 Days", days: 90, mult: "1.75x", multBps: 17500 },
+  { name: "180 Days", days: 180, mult: "2.50x", multBps: 25000 },
 ] as const;
+
+// v0.5: Weekly ratio calculation
+export function getWeeklyRatio(genesisTs: number, nowTs: number): { grienPct: number; bluPct: number; weekIndex: number } {
+  const WEEK_SECS = 7 * 86400;
+  const weekIndex = Math.floor((nowTs - genesisTs) / WEEK_SECS) + 1;
+  const grienBps = Math.min(9000, 500 + 150 * (weekIndex - 1));
+  const bluBps = 10000 - grienBps;
+  return { grienPct: grienBps / 100, bluPct: bluBps / 100, weekIndex };
+}
+
+// Early unstake fee calculation
+export function getEarlyUnstakeFee(lockTier: number, lockExpiry: number, nowTs: number): number {
+  if (lockTier === 0 || nowTs >= lockExpiry) return 0;
+  const LOCK_DURATIONS = [0, 30 * 86400, 90 * 86400, 180 * 86400];
+  const duration = LOCK_DURATIONS[lockTier];
+  const lockStart = lockExpiry - duration;
+  const elapsed = nowTs - lockStart;
+  const remainingPct = ((duration - elapsed) / duration) * 100;
+  if (remainingPct > 75) return 10;
+  if (remainingPct > 50) return 5;
+  return 2.5; // floor
+}
 
 // ── Formatting ─────────────────────────────────────────────────────────
 export function formatGrien(amount: BN | number | bigint): string {

@@ -2702,6 +2702,34 @@
           }
         },
         {
+          "name": "treasury_vault",
+          "docs": [
+            "Treasury vault receives early unstake fees"
+          ],
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  116,
+                  114,
+                  101,
+                  97,
+                  115,
+                  117,
+                  114,
+                  121,
+                  45,
+                  115,
+                  111,
+                  108
+                ]
+              }
+            ]
+          }
+        },
+        {
           "name": "system_program",
           "address": "11111111111111111111111111111111"
         }
@@ -4460,6 +4488,9 @@
     },
     {
       "name": "StakerAccount",
+      "docs": [
+        "v0.5: Single lock multiplier (replaces separate grien/blu multipliers)"
+      ],
       "type": {
         "kind": "struct",
         "fields": [
@@ -4492,23 +4523,24 @@
             "type": "i64"
           },
           {
-            "name": "grien_multiplier_bps",
+            "name": "lock_multiplier_bps",
             "docs": [
-              "GrienApple multiplier in basis points (10000 = 1.0x)"
+              "Unified lock multiplier in basis points (10000 = 1.0x)",
+              "Applies to total reward before Grien/Blu split"
             ],
             "type": "u16"
           },
           {
-            "name": "blu_multiplier_bps",
+            "name": "_reserved",
             "docs": [
-              "BluApple multiplier in basis points (10000 = 1.0x)"
+              "Reserved field (was blu_multiplier_bps — kept for alignment)"
             ],
             "type": "u16"
           },
           {
             "name": "weighted_sol",
             "docs": [
-              "Cached weighted SOL = deposited_sol * grien_multiplier_bps / 10000"
+              "Cached weighted SOL = deposited_sol * lock_multiplier_bps / 10000"
             ],
             "type": "u128"
           },

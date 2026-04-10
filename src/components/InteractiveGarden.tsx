@@ -32,12 +32,12 @@ interface BluData {
 
 // ── Hotspot definitions (percentage-based for scaling) ───────────
 const HOTSPOTS = [
-  { id: "groves", label: "The Groves", sub: "Stake SOL", x: 65, y: 30, w: 28, h: 35, glowColor: "rgba(45,106,79,0.5)" },
-  { id: "harvest", label: "Harvest Tree", sub: "Claim Rewards", x: 35, y: 8, w: 25, h: 30, glowColor: "rgba(181,133,27,0.5)" },
-  { id: "fountain", label: "The Fountain", sub: "Yield Rewards", x: 38, y: 42, w: 20, h: 25, glowColor: "rgba(64,145,108,0.5)" },
-  { id: "bank", label: "Village Bank", sub: "Emergency Exit", x: 5, y: 25, w: 22, h: 30, glowColor: "rgba(181,133,27,0.4)" },
-  { id: "cellar", label: "The Cellar", sub: "BluApple Vault", x: 8, y: 65, w: 20, h: 25, glowColor: "rgba(100,149,237,0.4)" },
-  { id: "gate", label: "Exit Gate", sub: "Unstake SOL", x: 40, y: 80, w: 20, h: 15, glowColor: "rgba(200,200,200,0.3)" },
+  { id: "groves", label: "The Groves", sub: "Stake SOL", x: 64, y: 32, w: 12, h: 8, glowColor: "rgba(45,106,79,0.5)" },
+  { id: "harvest", label: "Harvest Tree", sub: "Claim Rewards", x: 37, y: 14, w: 10, h: 7, glowColor: "rgba(181,133,27,0.5)" },
+  { id: "fountain", label: "The Fountain", sub: "Yield Rewards", x: 39, y: 53, w: 10, h: 7, glowColor: "rgba(64,145,108,0.5)" },
+  { id: "bank", label: "Village Bank", sub: "Emergency Exit", x: 8, y: 22, w: 11, h: 8, glowColor: "rgba(181,133,27,0.4)" },
+  { id: "cellar", label: "The Cellar", sub: "BluApple Vault", x: 10, y: 72, w: 10, h: 7, glowColor: "rgba(100,149,237,0.4)" },
+  { id: "gate", label: "Exit Gate", sub: "Unstake SOL", x: 40, y: 85, w: 10, h: 6, glowColor: "rgba(200,200,200,0.3)" },
 ];
 
 export default function InteractiveGarden() {
@@ -178,7 +178,7 @@ export default function InteractiveGarden() {
 
           {/* ── CSS Animations Layer ── */}
           {/* Fountain water glow */}
-          <div className="fountain-glow" style={{ position: "absolute", left: "45%", top: "50%", width: "10%", height: "12%", transform: "translate(-50%, -50%)" }}>
+          <div className="fountain-glow" style={{ position: "absolute", left: "44%", top: "58%", width: "6%", height: "8%", transform: "translate(-50%, -50%)" }}>
             <div className="absolute inset-0 rounded-full animate-fountain-pulse" style={{ background: "radial-gradient(circle, rgba(64,145,108,0.6) 0%, transparent 70%)" }} />
             {[0, 1, 2, 3].map(i => (
               <div key={i} className="fountain-particle" style={{
@@ -189,8 +189,8 @@ export default function InteractiveGarden() {
             ))}
           </div>
 
-          {/* Lantern flickers */}
-          {[[22, 55], [35, 70], [60, 65], [75, 50]].map(([lx, ly], i) => (
+          {/* Lantern flickers — along the paths */}
+          {[[30, 48], [50, 48], [30, 68], [55, 68]].map(([lx, ly], i) => (
             <div key={`lantern-${i}`} className="absolute" style={{ left: `${lx}%`, top: `${ly}%`, width: "3%", height: "4%" }}>
               <div style={{
                 width: "100%", height: "100%", borderRadius: "50%",
@@ -200,8 +200,8 @@ export default function InteractiveGarden() {
             </div>
           ))}
 
-          {/* Mushroom glows */}
-          {[[15, 78], [80, 72], [55, 85]].map(([mx, my], i) => (
+          {/* Mushroom glows — bottom edges */}
+          {[[25, 82], [60, 82], [82, 75]].map(([mx, my], i) => (
             <div key={`mush-${i}`} className="absolute" style={{ left: `${mx}%`, top: `${my}%`, width: "4%", height: "5%" }}>
               <div style={{
                 width: "100%", height: "100%", borderRadius: "50%",
@@ -211,10 +211,10 @@ export default function InteractiveGarden() {
             </div>
           ))}
 
-          {/* Golden harvest particles */}
+          {/* Golden harvest particles — from the big tree */}
           {[0, 1, 2, 3, 4].map(i => (
             <div key={`gold-${i}`} style={{
-              position: "absolute", left: `${38 + i * 5}%`, top: "10%",
+              position: "absolute", left: `${38 + i * 4}%`, top: "5%",
               width: 5, height: 5, borderRadius: "50%", background: "rgba(181,133,27,0.7)",
               animation: `gold-fall ${4 + i * 0.5}s ease-in infinite`, animationDelay: `${i * 0.9}s`,
             }} />

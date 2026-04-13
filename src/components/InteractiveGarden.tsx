@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback, useRef } from "react";
-import type { MouseEvent } from "react";
+import type { MouseEvent, PointerEvent } from "react";
 import { useWallet, useConnection } from "@solana/wallet-adapter-react";
 import { useWalletModal } from "@solana/wallet-adapter-react-ui";
 import { getAssociatedTokenAddressSync, getAccount, createAssociatedTokenAccountInstruction } from "@solana/spl-token";
@@ -96,6 +96,31 @@ const HOTSPOT_TRIGGER_POINTS: Record<string, GardenPoint> = {
   gate: { x: 65.6, y: 84.1 },
 };
 
+const CONTROL_VECTORS: Record<StewardDirection, GardenPoint> = {
+  north: { x: 0, y: -1 },
+  south: { x: 0, y: 1 },
+  east: { x: 1, y: 0 },
+  west: { x: -1, y: 0 },
+};
+
+const CONTROL_KEY_MAP: Record<string, StewardDirection> = {
+  w: "north",
+  arrowup: "north",
+  s: "south",
+  arrowdown: "south",
+  a: "west",
+  arrowleft: "west",
+  d: "east",
+  arrowright: "east",
+};
+
+const DPAD_BUTTONS: { direction: StewardDirection; label: string; className: string }[] = [
+  { direction: "north", label: "↑", className: "col-start-2 row-start-1" },
+  { direction: "west", label: "←", className: "col-start-1 row-start-2" },
+  { direction: "east", label: "→", className: "col-start-3 row-start-2" },
+  { direction: "south", label: "↓", className: "col-start-2 row-start-3" },
+];
+
 function isInWalkableArea(point: GardenPoint): boolean {
   let inside = false;
   for (let i = 0, j = WALKABLE_POLYGON.length - 1; i < WALKABLE_POLYGON.length; j = i++) {
@@ -138,6 +163,20 @@ function getStewardDirection(dx: number, dy: number): StewardDirection {
   return dy >= 0 ? "south" : "north";
 }
 
+function getControlVector(controls: Set<StewardDirection>): GardenPoint | null {
+  let x = 0;
+  let y = 0;
+  controls.forEach(direction => {
+    x += CONTROL_VECTORS[direction].x;
+    y += CONTROL_VECTORS[direction].y;
+  });
+
+  const distance = Math.hypot(x, y);
+  if (!distance) return null;
+
+  return { x: x / distance, y: y / distance };
+}
+
 export default function InteractiveGarden() {
   const { publicKey } = useWallet();
   const { connection } = useConnection();
@@ -169,6 +208,9 @@ export default function InteractiveGarden() {
 
   const gardenSceneRef = useRef<HTMLDivElement | null>(null);
   const proximityCooldownRef = useRef<Record<string, number>>({});
+  const activeModalRef = useRef<string | null>(null);
+  const heldControlsRef = useRef<Set<StewardDirection>>(new Set());
+  const [heldControls, setHeldControls] = useState<StewardDirection[]>([]);
   const [stewardFrame, setStewardFrame] = useState(0);
   const [steward, setSteward] = useState<{
     position: GardenPoint;
@@ -197,10 +239,59 @@ export default function InteractiveGarden() {
 
   useEffect(() => { fetchAll(); }, [fetchAll]);
 
+  const setControlHeld = useCallback((direction: StewardDirection, isHeld: boolean) => {
+    if (isHeld) heldControlsRef.current.add(direction);
+    else heldControlsRef.current.delete(direction);
+    setHeldControls(Array.from(heldControlsRef.current));
+
+    if (isHeld) {
+      setSteward(current => ({ ...current, target: null, isWalking: true, direction }));
+    } else if (heldControlsRef.current.size === 0) {
+      setSteward(current => ({ ...current, isWalking: Boolean(current.target) }));
+    }
+  }, []);
+
+  useEffect(() => {
+    activeModalRef.current = activeModal;
+    if (activeModal) {
+      heldControlsRef.current.clear();
+      setHeldControls([]);
+    }
+  }, [activeModal]);
+
   useEffect(() => {
     const timer = window.setInterval(() => setStewardFrame(frame => (frame + 1) % 4), 150);
     return () => window.clearInterval(timer);
   }, []);
+
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      const target = event.target as HTMLElement | null;
+      if (activeModalRef.current || target?.tagName === "INPUT" || target?.tagName === "TEXTAREA" || target?.isContentEditable) return;
+
+      const direction = CONTROL_KEY_MAP[event.key.toLowerCase()];
+      if (!direction) return;
+
+      event.preventDefault();
+      setControlHeld(direction, true);
+    };
+
+    const handleKeyUp = (event: KeyboardEvent) => {
+      const direction = CONTROL_KEY_MAP[event.key.toLowerCase()];
+      if (!direction) return;
+
+      event.preventDefault();
+      setControlHeld(direction, false);
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    window.addEventListener("keyup", handleKeyUp);
+
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+      window.removeEventListener("keyup", handleKeyUp);
+    };
+  }, [setControlHeld]);
 
   useEffect(() => {
     let frameId = 0;
@@ -211,6 +302,22 @@ export default function InteractiveGarden() {
       lastFrame = now;
 
       setSteward(current => {
+        const controlVector = activeModalRef.current ? null : getControlVector(heldControlsRef.current);
+        if (controlVector) {
+          const nextPosition = {
+            x: current.position.x + controlVector.x * STEWARD_WALK_SPEED * dt,
+            y: current.position.y + controlVector.y * STEWARD_WALK_SPEED * dt,
+          };
+
+          return {
+            ...current,
+            position: isInWalkableArea(nextPosition) ? nextPosition : current.position,
+            target: null,
+            direction: getStewardDirection(controlVector.x, controlVector.y),
+            isWalking: true,
+          };
+        }
+
         if (!current.target) return current;
 
         const dx = current.target.x - current.position.x;
@@ -261,6 +368,13 @@ export default function InteractiveGarden() {
     const target = getNearestWalkablePoint(point);
     setSteward(current => ({ ...current, target, isWalking: true }));
   }, [activeModal]);
+
+  const handleDpadPointer = useCallback((event: PointerEvent<HTMLButtonElement>, direction: StewardDirection, isHeld: boolean) => {
+    event.preventDefault();
+    event.stopPropagation();
+    if (isHeld) event.currentTarget.setPointerCapture(event.pointerId);
+    setControlHeld(direction, isHeld);
+  }, [setControlHeld]);
 
   useEffect(() => {
     if (activeModal) return;
@@ -482,6 +596,36 @@ export default function InteractiveGarden() {
             <div className={`absolute -top-5 left-1/2 -translate-x-1/2 whitespace-nowrap rpg-panel px-2 py-0.5 text-[7px] font-pixel text-o7-gold transition-opacity ${steward.isWalking ? "opacity-0" : "opacity-90"}`}>
               Steward
             </div>
+          </div>
+
+          <div
+            className="absolute bottom-3 left-3 z-[1200] grid grid-cols-3 grid-rows-3 gap-1 rounded-xl border border-o7-gold/25 bg-o7-ink/45 p-2 shadow-lg backdrop-blur-sm"
+            onClick={event => event.stopPropagation()}
+            aria-label="Garden steward movement controls"
+          >
+            {DPAD_BUTTONS.map(button => {
+              const isHeld = heldControls.includes(button.direction);
+              return (
+                <button
+                  key={button.direction}
+                  type="button"
+                  className={`${button.className} h-9 w-9 rounded-md border font-pixel text-xs transition-all ${
+                    isHeld
+                      ? "border-o7-gold bg-o7-gold/30 text-o7-gold shadow-[0_0_12px_rgba(181,133,27,0.45)]"
+                      : "border-o7-gold/35 bg-black/45 text-o7-cream/70 hover:border-o7-gold/70 hover:text-o7-gold"
+                  }`}
+                  onPointerDown={event => handleDpadPointer(event, button.direction, true)}
+                  onPointerUp={event => handleDpadPointer(event, button.direction, false)}
+                  onPointerCancel={event => handleDpadPointer(event, button.direction, false)}
+                  onPointerLeave={event => handleDpadPointer(event, button.direction, false)}
+                  onClick={event => event.stopPropagation()}
+                  aria-label={`Move steward ${button.direction}`}
+                >
+                  {button.label}
+                </button>
+              );
+            })}
+            <div className="col-start-2 row-start-2 h-9 w-9 rounded-md border border-o7-gold/20 bg-black/30" />
           </div>
 
           {/* ── Clickable Hotspot Zones ── */}

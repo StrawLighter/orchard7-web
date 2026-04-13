@@ -470,10 +470,8 @@ export default function InteractiveGarden() {
               aspectRatio: "1 / 1",
               transform: "translate(-50%, -82%)",
               zIndex: Math.round(steward.position.y * 10),
-              filter: "drop-shadow(0 5px 4px rgba(0,0,0,0.45))",
             }}
           >
-            <div className="absolute left-1/2 top-[76%] h-[9%] w-[36%] -translate-x-1/2 rounded-full bg-black/35 blur-[2px]" />
             <img
               src={stewardSrc}
               alt="Senior garden steward"

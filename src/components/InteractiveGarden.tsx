@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
+import type { MouseEvent } from "react";
 import { useWallet, useConnection } from "@solana/wallet-adapter-react";
 import { useWalletModal } from "@solana/wallet-adapter-react-ui";
 import { getAssociatedTokenAddressSync, getAccount, createAssociatedTokenAccountInstruction } from "@solana/spl-token";
@@ -29,6 +30,8 @@ interface BluData {
   totalEarned: number; totalHarvested: number; batchCount: number;
   batches: { earnedTs: number; totalAmount: number; harvestedAmount: number }[];
 }
+type GardenPoint = { x: number; y: number };
+type StewardDirection = "north" | "south" | "east" | "west";
 
 // ── Hotspot definitions (percentage-based for scaling) ───────────
 // Hotspots on the wooden signpost boards — verified with green box overlay on image
@@ -40,6 +43,100 @@ const HOTSPOTS = [
   { id: "fountain", label: "Teal Fountain", sub: "Yield Rewards", x: 46.2, y: 67.6, w: 6.8, h: 4.2, glowColor: "rgba(64,145,108,0.5)" },
   { id: "gate", label: "Apple Orchard", sub: "Unstake SOL", x: 62.2, y: 82.0, w: 6.8, h: 4.2, glowColor: "rgba(45,106,79,0.4)" },
 ];
+
+const STEWARD_ASSET_BASE = "/assets/senior-garden-steward";
+const STEWARD_WALK_SPEED = 11;
+const STEWARD_START: GardenPoint = { x: 50.5, y: 83 };
+const STEWARD_PROXIMITY = 4.6;
+
+const WALKABLE_POLYGON: GardenPoint[] = [
+  { x: 18, y: 44 },
+  { x: 23, y: 50 },
+  { x: 37, y: 52 },
+  { x: 38, y: 45 },
+  { x: 47, y: 44 },
+  { x: 52, y: 42 },
+  { x: 60, y: 43 },
+  { x: 61, y: 50 },
+  { x: 70, y: 50 },
+  { x: 84, y: 49 },
+  { x: 96, y: 47 },
+  { x: 96, y: 58 },
+  { x: 78, y: 58 },
+  { x: 69, y: 57 },
+  { x: 63, y: 60 },
+  { x: 64, y: 76 },
+  { x: 69, y: 80 },
+  { x: 69, y: 88 },
+  { x: 62, y: 89 },
+  { x: 56, y: 80 },
+  { x: 52, y: 80 },
+  { x: 52, y: 95 },
+  { x: 48, y: 95 },
+  { x: 48, y: 80 },
+  { x: 44, y: 76 },
+  { x: 39, y: 84 },
+  { x: 32, y: 86 },
+  { x: 28, y: 82 },
+  { x: 32, y: 74 },
+  { x: 38, y: 76 },
+  { x: 37, y: 58 },
+  { x: 25, y: 58 },
+  { x: 25, y: 54 },
+];
+
+const STEWARD_BLOCKERS: { left: number; top: number; right: number; bottom: number }[] = [];
+
+const HOTSPOT_TRIGGER_POINTS: Record<string, GardenPoint> = {
+  bank: { x: 29.5, y: 52 },
+  harvest: { x: 57.5, y: 43.5 },
+  groves: { x: 86.5, y: 50 },
+  cellar: { x: 32.2, y: 83.6 },
+  fountain: { x: 49.6, y: 69.7 },
+  gate: { x: 65.6, y: 84.1 },
+};
+
+function isInWalkableArea(point: GardenPoint): boolean {
+  let inside = false;
+  for (let i = 0, j = WALKABLE_POLYGON.length - 1; i < WALKABLE_POLYGON.length; j = i++) {
+    const pi = WALKABLE_POLYGON[i];
+    const pj = WALKABLE_POLYGON[j];
+    const intersects = pi.y > point.y !== pj.y > point.y
+      && point.x < ((pj.x - pi.x) * (point.y - pi.y)) / (pj.y - pi.y) + pi.x;
+    if (intersects) inside = !inside;
+  }
+
+  const blocked = STEWARD_BLOCKERS.some(blocker =>
+    point.x >= blocker.left && point.x <= blocker.right && point.y >= blocker.top && point.y <= blocker.bottom
+  );
+
+  return inside && !blocked;
+}
+
+function getNearestWalkablePoint(point: GardenPoint): GardenPoint {
+  if (isInWalkableArea(point)) return point;
+
+  let nearest = STEWARD_START;
+  let bestDistance = Number.POSITIVE_INFINITY;
+  for (let x = 18; x <= 96; x += 1) {
+    for (let y = 42; y <= 95; y += 1) {
+      const candidate = { x, y };
+      if (!isInWalkableArea(candidate)) continue;
+      const distance = Math.hypot(candidate.x - point.x, candidate.y - point.y);
+      if (distance < bestDistance) {
+        bestDistance = distance;
+        nearest = candidate;
+      }
+    }
+  }
+
+  return nearest;
+}
+
+function getStewardDirection(dx: number, dy: number): StewardDirection {
+  if (Math.abs(dx) > Math.abs(dy)) return dx >= 0 ? "east" : "west";
+  return dy >= 0 ? "south" : "north";
+}
 
 export default function InteractiveGarden() {
   const { publicKey } = useWallet();
@@ -70,6 +167,16 @@ export default function InteractiveGarden() {
   const [redeemAmount, setRedeemAmount] = useState("");
   const [unstakeAmount, setUnstakeAmount] = useState("");
 
+  const gardenSceneRef = useRef<HTMLDivElement | null>(null);
+  const proximityCooldownRef = useRef<Record<string, number>>({});
+  const [stewardFrame, setStewardFrame] = useState(0);
+  const [steward, setSteward] = useState<{
+    position: GardenPoint;
+    target: GardenPoint | null;
+    direction: StewardDirection;
+    isWalking: boolean;
+  }>({ position: STEWARD_START, target: null, direction: "south", isWalking: false });
+
   // ── Fetch ──────────────────────────────────────────────────────
   const fetchAll = useCallback(async () => {
     if (!publicKey || !programs || !connection) return;
@@ -89,6 +196,92 @@ export default function InteractiveGarden() {
   }, [publicKey, programs, connection]);
 
   useEffect(() => { fetchAll(); }, [fetchAll]);
+
+  useEffect(() => {
+    const timer = window.setInterval(() => setStewardFrame(frame => (frame + 1) % 4), 150);
+    return () => window.clearInterval(timer);
+  }, []);
+
+  useEffect(() => {
+    let frameId = 0;
+    let lastFrame = performance.now();
+
+    const tick = (now: number) => {
+      const dt = Math.min((now - lastFrame) / 1000, 0.05);
+      lastFrame = now;
+
+      setSteward(current => {
+        if (!current.target) return current;
+
+        const dx = current.target.x - current.position.x;
+        const dy = current.target.y - current.position.y;
+        const distance = Math.hypot(dx, dy);
+
+        if (distance < 0.25) {
+          return { ...current, position: current.target, target: null, isWalking: false };
+        }
+
+        const step = Math.min(STEWARD_WALK_SPEED * dt, distance);
+        const nextPosition = {
+          x: current.position.x + (dx / distance) * step,
+          y: current.position.y + (dy / distance) * step,
+        };
+
+        return {
+          ...current,
+          position: isInWalkableArea(nextPosition) ? nextPosition : getNearestWalkablePoint(nextPosition),
+          direction: getStewardDirection(dx, dy),
+          isWalking: true,
+        };
+      });
+
+      frameId = requestAnimationFrame(tick);
+    };
+
+    frameId = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(frameId);
+  }, []);
+
+  const activateHotspot = useCallback((zoneId: string) => {
+    if (publicKey) setActiveModal(zoneId);
+    else setVisible(true);
+  }, [publicKey, setVisible]);
+
+  const handleGardenClick = useCallback((event: MouseEvent<HTMLDivElement>) => {
+    if (activeModal) return;
+
+    const rect = gardenSceneRef.current?.getBoundingClientRect();
+    if (!rect) return;
+
+    const point = {
+      x: ((event.clientX - rect.left) / rect.width) * 100,
+      y: ((event.clientY - rect.top) / rect.height) * 100,
+    };
+
+    const target = getNearestWalkablePoint(point);
+    setSteward(current => ({ ...current, target, isWalking: true }));
+  }, [activeModal]);
+
+  useEffect(() => {
+    if (activeModal) return;
+
+    const zone = HOTSPOTS.find(hotspot => {
+      const trigger = HOTSPOT_TRIGGER_POINTS[hotspot.id] ?? { x: hotspot.x + hotspot.w / 2, y: hotspot.y + hotspot.h / 2 };
+      return Math.hypot(trigger.x - steward.position.x, trigger.y - steward.position.y) <= STEWARD_PROXIMITY;
+    });
+
+    if (!zone) {
+      setHoveredZone(current => (current && HOTSPOTS.some(hotspot => hotspot.id === current) ? null : current));
+      return;
+    }
+
+    setHoveredZone(zone.id);
+    const lastTriggered = proximityCooldownRef.current[zone.id] ?? 0;
+    if (Date.now() - lastTriggered > 2500) {
+      proximityCooldownRef.current[zone.id] = Date.now();
+      activateHotspot(zone.id);
+    }
+  }, [activeModal, activateHotspot, steward.position]);
 
   // ── TX helper ──────────────────────────────────────────────────
   const ensureAta = async () => {
@@ -127,6 +320,9 @@ export default function InteractiveGarden() {
   const earlyFee = stakerData ? getEarlyUnstakeFee(stakerData.lockTier, stakerData.lockExpiry, nowTs) : 0;
   const ratio = gardenData ? getWeeklyRatio(gardenData.genesisTs, nowTs) : { grienPct: 5, bluPct: 95, weekIndex: 1 };
   const lockRemaining = stakerData && isLocked ? stakerData.lockExpiry - nowTs : 0;
+  const stewardSrc = steward.isWalking
+    ? `${STEWARD_ASSET_BASE}/animations/Walking-0b9f974c/${steward.direction}/frame_${String(stewardFrame).padStart(3, "0")}.png`
+    : `${STEWARD_ASSET_BASE}/rotations/${steward.direction}.png`;
 
   // ── Auto-crank ─────────────────────────────────────────────────
   const autoCrankAndClaim = async () => {
@@ -173,7 +369,12 @@ export default function InteractiveGarden() {
         </div>
 
         {/* ═══ INTERACTIVE GARDEN SCENE ═══ */}
-        <div className="relative w-full rounded-lg overflow-hidden border-2 border-o7-green-mid/30" style={{ aspectRatio: "16/9" }}>
+        <div
+          ref={gardenSceneRef}
+          className="relative w-full cursor-crosshair rounded-lg overflow-hidden border-2 border-o7-green-mid/30"
+          style={{ aspectRatio: "16/9" }}
+          onClick={handleGardenClick}
+        >
           {/* Base image */}
           <img src="/assets/garden-scene.png" alt="The Gardens" className="absolute inset-0 w-full h-full object-cover" style={{ imageRendering: "auto" }} />
 
@@ -245,6 +446,46 @@ export default function InteractiveGarden() {
             }} />
           ))}
 
+          {steward.target && (
+            <div
+              className="absolute pointer-events-none rounded-full border border-o7-gold/70"
+              style={{
+                left: `${steward.target.x}%`,
+                top: `${steward.target.y}%`,
+                width: "2.2%",
+                height: "1.2%",
+                transform: "translate(-50%, -50%)",
+                animation: "steward-destination 0.8s ease-out infinite",
+                zIndex: 4,
+              }}
+            />
+          )}
+
+          <div
+            className="absolute pointer-events-none"
+            style={{
+              left: `${steward.position.x}%`,
+              top: `${steward.position.y}%`,
+              width: "8.2%",
+              aspectRatio: "1 / 1",
+              transform: "translate(-50%, -82%)",
+              zIndex: Math.round(steward.position.y * 10),
+              filter: "drop-shadow(0 5px 4px rgba(0,0,0,0.45))",
+            }}
+          >
+            <div className="absolute left-1/2 top-[76%] h-[9%] w-[36%] -translate-x-1/2 rounded-full bg-black/35 blur-[2px]" />
+            <img
+              src={stewardSrc}
+              alt="Senior garden steward"
+              className="relative h-full w-full select-none object-contain"
+              draggable={false}
+              style={{ imageRendering: "pixelated" }}
+            />
+            <div className={`absolute -top-5 left-1/2 -translate-x-1/2 whitespace-nowrap rpg-panel px-2 py-0.5 text-[7px] font-pixel text-o7-gold transition-opacity ${steward.isWalking ? "opacity-0" : "opacity-90"}`}>
+              Steward
+            </div>
+          </div>
+
           {/* ── Clickable Hotspot Zones ── */}
           {HOTSPOTS.map(zone => (
             <div
@@ -258,7 +499,10 @@ export default function InteractiveGarden() {
               }}
               onMouseEnter={() => setHoveredZone(zone.id)}
               onMouseLeave={() => setHoveredZone(null)}
-              onClick={() => publicKey ? setActiveModal(zone.id) : setVisible(true)}
+              onClick={event => {
+                event.stopPropagation();
+                activateHotspot(zone.id);
+              }}
             >
               {/* Label on hover */}
               <div className={`absolute -top-8 left-1/2 -translate-x-1/2 whitespace-nowrap rpg-panel px-3 py-1 rounded transition-opacity duration-200 ${hoveredZone === zone.id ? "opacity-100" : "opacity-0"}`}>
@@ -517,6 +761,10 @@ export default function InteractiveGarden() {
           50% { transform: translate(100px, -50px); opacity: 0.3; }
           90% { opacity: 0.5; }
           100% { transform: translate(-80px, 30px); opacity: 0; }
+        }
+        @keyframes steward-destination {
+          0% { transform: translate(-50%, -50%) scale(0.65); opacity: 0.9; }
+          100% { transform: translate(-50%, -50%) scale(1.8); opacity: 0; }
         }
         .animate-slide-in {
           animation: slide-in 0.3s ease-out;
